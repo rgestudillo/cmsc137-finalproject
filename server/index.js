@@ -29,14 +29,20 @@ io.on('connection', (socket) => {
   });
 
   socket.on('joinLobby', (lobbyId) => {
-    if (lobbies[lobbyId] && lobbies[lobbyId].length < 2) {
-      lobbies[lobbyId].push(socket);
-      socket.join(lobbyId);  // Join socket to room with lobbyId
-      socket.emit('opponentConnected');
-      lobbies[lobbyId][0].emit('opponentConnected');
-      console.log(`Player joined lobby ${lobbyId}`);
+    if (lobbies[lobbyId]) {
+      if (lobbies[lobbyId].length < 2) {
+        lobbies[lobbyId].push(socket);
+        socket.join(lobbyId);  // Join socket to room with lobbyId
+        socket.emit('opponentConnected');
+        lobbies[lobbyId][0].emit('opponentConnected');
+        console.log(`Player joined lobby ${lobbyId}`);
+      } else {
+        console.log('lobby is full', lobbies[lobbyId]);
+        socket.emit('lobbyFull');  // Emit error if the lobby is full
+      }
     } else {
-      socket.emit('lobbyFull');
+      console.log('lobby not found');
+      socket.emit('lobbyNotFound');  // Emit error if the lobby doesn't exist
     }
   });
 

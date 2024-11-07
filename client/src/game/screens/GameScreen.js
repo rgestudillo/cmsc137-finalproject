@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import shipImg from '../assets/ship.png';
 import playerSprite from '../assets/player.png';
 import {
@@ -38,6 +39,34 @@ class MyGame extends Phaser.Scene {
 
     create() {
         console.log("MyGame scene created", this.gameId.toString());
+
+        // Emit joinLobby event with gameId
+        this.socket.emit('joinLobby', this.gameId);
+
+
+        this.socket.on('lobbyFull', () => {
+            this.setupGame();
+        });
+
+        // Show error message and do not proceed with setup if game not found
+        this.socket.on('lobbyNotFound', () => {
+            this.showInvalidGameMessage('Game not found');
+        });
+
+        // Proceed with game setup only if lobby is valid
+        this.socket.on('opponentConnected', () => {
+            this.setupGame();
+        });
+    }
+
+    showInvalidGameMessage(message) {
+        const text = this.add.text(400, 225, message, {
+            font: '32px Arial',
+            fill: '#ff0000',
+        }).setOrigin(0.5);
+    }
+
+    setupGame() {
         const ship = this.add.image(0, 0, 'ship');
         player.sprite = this.add.sprite(PLAYER_START_X, PLAYER_START_Y, 'player');
         player.sprite.displayHeight = PLAYER_HEIGHT;
@@ -66,9 +95,6 @@ class MyGame extends Phaser.Scene {
             pressedKeys = pressedKeys.filter((key) => key !== e.code);
         });
 
-        // Emit joinLobby event with gameId
-        this.socket.emit('joinLobby', this.gameId);
-
         // Handle move event
         this.socket.on('move', ({ x, y }) => {
             console.log('Received move');
@@ -90,29 +116,37 @@ class MyGame extends Phaser.Scene {
     }
 
     update() {
-        // Update camera position to follow the player sprite
-        this.scene.scene.cameras.main.centerOn(player.sprite.x, player.sprite.y);
-        const playerMoved = movePlayer(pressedKeys, player.sprite);
+        // Ensure player.sprite is defined before accessing its properties
+        if (player.sprite) {
+            // Update camera position to follow the player sprite
+            this.scene.scene.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
-        if (playerMoved) {
-            this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y });
-            player.movedLastFrame = true;
-        } else {
-            if (player.movedLastFrame) {
-                this.socket.emit('moveEnd', { gameId: this.gameId });
+            const playerMoved = movePlayer(pressedKeys, player.sprite);
+
+            if (playerMoved) {
+                this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y });
+                player.movedLastFrame = true;
+            } else {
+                if (player.movedLastFrame) {
+                    this.socket.emit('moveEnd', { gameId: this.gameId });
+                }
+                player.movedLastFrame = false;
             }
-            player.movedLastFrame = false;
+
+            animateMovement(pressedKeys, player.sprite);
         }
 
-        animateMovement(pressedKeys, player.sprite);
-
-        // Animate other player
-        if (otherPlayer.moving && !otherPlayer.sprite.anims.isPlaying) {
-            otherPlayer.sprite.play('running');
-        } else if (!otherPlayer.moving && otherPlayer.sprite.anims.isPlaying) {
-            otherPlayer.sprite.stop('running');
+        // Ensure otherPlayer.sprite is defined before accessing its properties
+        if (otherPlayer.sprite) {
+            // Animate other player
+            if (otherPlayer.moving && !otherPlayer.sprite.anims.isPlaying) {
+                otherPlayer.sprite.play('running');
+            } else if (!otherPlayer.moving && otherPlayer.sprite.anims.isPlaying) {
+                otherPlayer.sprite.stop('running');
+            }
         }
     }
+
 }
 
 export default MyGame;

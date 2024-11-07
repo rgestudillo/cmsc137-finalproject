@@ -113,7 +113,7 @@ const LobbyPage = () => {
 
             <div>
                 <button
-                    onClick={() => navigate("/waiting")}
+                    onClick={() => navigate("/")}
                     style={{
                         fontSize: "20px",
                         color: "#fff",
@@ -123,7 +123,7 @@ const LobbyPage = () => {
                         cursor: "pointer",
                     }}
                 >
-                    Back to Waiting
+                    Back to Main
                 </button>
             </div>
         </div>
