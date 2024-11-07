@@ -1,5 +1,5 @@
-import shipImg from './assets/ship.png';
-import playerSprite from './assets/player.png';
+import shipImg from '../assets/ship.png';
+import playerSprite from '../assets/player.png';
 import {
     PLAYER_SPRITE_HEIGHT,
     PLAYER_SPRITE_WIDTH,
@@ -10,9 +10,9 @@ import {
     serverUrl,
     serverPort
 
-} from './constants';
-import { movePlayer } from './movement';
-import { animateMovement } from './animation';
+} from '../utils/constants';
+import { movePlayer } from '../utils/movement';
+import { animateMovement } from '../utils/animation';
 import { io } from 'socket.io-client';
 
 const player = {};

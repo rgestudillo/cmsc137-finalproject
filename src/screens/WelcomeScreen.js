@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { io } from 'socket.io-client';
-import { serverUrl, serverPort } from './constants';
+import { serverUrl, serverPort } from '../utils/constants';
 
 let socket;
 
