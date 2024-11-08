@@ -15,9 +15,10 @@ This template is updated for Phaser 3.50.0 and above.
 
 ## Configuration
 
-1. In the `client/src/game/utils/constants.js` file, the server URL is defined as follows:
+1. In the `client/.env` file, the server URL is defined as follows:
     ```javascript
-    export const serverUrl = 'localhost';
+      VITE_SERVER_URL='localhost'
+      VITE_SERVER_PORT=5001
     ```
 
 ## Available Commands
