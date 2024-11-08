@@ -11,11 +11,7 @@ export const SocketProvider = ({ children }) => {
 
     // Connect socket when the component mounts
     useEffect(() => {
-        const newSocket = io(
-            `http://${import.meta.env.VITE_SERVER_URL}:${
-                import.meta.env.VITE_SERVER_PORT
-            }`
-        );
+        const newSocket = io(import.meta.env.VITE_SERVER_URL);
         setSocket(newSocket);
 
         // Clean up on unmount
