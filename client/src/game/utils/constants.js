@@ -7,5 +7,5 @@ export const PLAYER_START_Y = 100;
 export const PLAYER_SPEED = 2;
 export const SHIP_WIDTH = 2160;
 export const SHIP_HEIGHT = 1166;
-export const serverUrl = '192.168.0.200';  // server URL here
+export const serverUrl = '172.16.12.129';  // server URL here
 export const serverPort = 5001;  // server port here

@@ -1,49 +1,69 @@
-# Phaser 3 Webpack Project Template
+# CMSC 137 Final Project
 
-A Phaser 3 project template with ES6 support via [Babel 7](https://babeljs.io/) and [Webpack 4](https://webpack.js.org/) that includes hot-reloading for development and production-ready builds.
+A Phaser 3 project template with ES6 support via [Babel 7](https://babeljs.io/) and [Webpack 4](https://webpack.js.org/), which includes hot-reloading for development and production-ready builds. It also integrates with a backend server and allows for dynamic server configuration using environment variables.
 
-This has been updated for Phaser 3.50.0 version and above.
-
-Loading images via JavaScript module `import` is also supported, although not recommended.
+This template is updated for Phaser 3.50.0 and above.
 
 ## Requirements
 
-[Node.js](https://nodejs.org) is required to install dependencies and run scripts via `npm`.
+- [Node.js](https://nodejs.org) is required to install dependencies and run scripts via `npm`.
+
+## Project Structure
+
+- `client/` - Contains the Phaser 3 frontend code.
+- `server/` - Contains the backend server code.
+
+## Configuration
+
+1. In the `client/src/game/utils/constants.js` file, the server URL is defined as follows:
+    ```javascript
+    export const serverUrl = 'localhost';
+    ```
 
 ## Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm install` | Install project dependencies |
-| `npm start` | Build project and open web server running project |
-| `npm run build` | Builds code bundle with production settings (minification, uglification, etc..) |
+From the root directory, navigate into `client/` or `server/` to run the following commands:
 
-## Writing Code
+| Command                   | Description                                                    |
+|---------------------------|----------------------------------------------------------------|
+| `npm install`             | Install project dependencies for both `client` and `server`.   |
+| `npm start` (in `server`) | Start the backend server.                                      |
+| `npm run dev` (in `client`)| Start the frontend with hot-reloading.                        |
+| `npm run build` (in `client`) | Builds frontend code with production settings.            |
 
-After cloning the repo, run `npm install` from your project directory. Then, you can start the local development server by running `npm start`.
+## Instructions
 
-After starting the development server with `npm start`, you can edit any files in the `src` folder and webpack will automatically recompile and reload your server (available at `http://localhost:8080` by default).
+### Initial Setup
 
-## Customizing the Template
+1. **Install Dependencies:**
+   - From the root directory, install the dependencies for both the client and server.
+     ```bash
+     cd client
+     npm install
+     cd ../server
+     npm install
+     ```
 
-### Babel
+2. **Run the Project:**
+   - **Frontend:** In the `client` directory, start the development server:
+     ```bash
+     npm run dev
+     ```
+   - **Backend:** In the `server` directory, start the backend server:
+     ```bash
+     npm start
+     ```
 
-You can write modern ES6+ JavaScript and Babel will transpile it to a version of JavaScript that you want your project to support. The targeted browsers are set in the `.babelrc` file and the default currently targets all browsers with total usage over "0.25%" but excludes IE11 and Opera Mini.
+   - The frontend will be available at `http://localhost:8080` (default for Webpack), and the backend at `http://localhost:3000` (or whatever IP you set in `.env`).
 
- ```
-"browsers": [
-  ">0.25%",
-  "not ie 11",
-  "not op_mini all"
-]
- ```
+### Writing Code
 
-### Webpack
+Edit any files in the `client/src` folder, and Webpack will automatically recompile and reload the frontend server.
 
-If you want to customize your build, such as adding a new webpack loader or plugin (i.e. for loading CSS or fonts), you can modify the `webpack/base.js` file for cross-project changes, or you can modify and/or create new configuration files and target them in specific npm tasks inside of `package.json'.
+### Building for Production
 
-## Deploying Code
+When ready for deployment, build the frontend by running:
 
-After you run the `npm run build` command, your code will be built into a single bundle located at `dist/bundle.min.js` along with any other assets you project depended. 
-
-If you put the contents of the `dist` folder in a publicly-accessible location (say something like `http://mycoolserver.com`), you should be able to open `http://mycoolserver.com/index.html` and play your game.
+```bash
+cd client
+npm run build
