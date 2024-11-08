@@ -1,6 +1,5 @@
 // SocketContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { serverUrl, serverPort } from "../game/utils/constants";
 import { io } from "socket.io-client";
 
 const SocketContext = createContext();
@@ -12,7 +11,7 @@ export const SocketProvider = ({ children }) => {
 
     // Connect socket when the component mounts
     useEffect(() => {
-        const newSocket = io(`http://${serverUrl}:${serverPort}`);
+        const newSocket = io(`http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}`);
         setSocket(newSocket);
 
         // Clean up on unmount
