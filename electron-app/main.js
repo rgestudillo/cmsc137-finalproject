@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
-import { spawn } from 'child_process';
+import { fork } from 'child_process';
 import getPort from 'get-port';
 import os from 'os';
 
@@ -30,17 +30,29 @@ async function startServer() {
     const ipAddress = getLocalIpAddress();
     console.log(`Starting backend server on ${ipAddress}:${backendPort}`);
 
-    serverProcess = spawn('node', [path.join(__dirname, '../server/index.js')], {
+    // Adjust server path for production
+    const serverPath = process.env.NODE_ENV === 'development'
+        ? path.join(__dirname, 'server', 'index.js')
+        : path.join(process.resourcesPath, 'server', 'index.js'); // Packaged app path
+
+    console.log(`Using server path: ${serverPath}`);
+
+    serverProcess = fork(serverPath, [], {
         stdio: 'inherit',
-        env: { ...process.env, PORT: backendPort, NODE_ENV: process.env.NODE_ENV || 'development' }
+        env: {
+            ...process.env,
+            PORT: backendPort,
+            NODE_ENV: process.env.NODE_ENV || 'development'
+        }
     });
 
     serverProcess.on('error', (err) => {
         console.error("Failed to start server:", err);
     });
 
-    return `${ipAddress}:${backendPort}`; // Return the full URL with IP address
+    return `${ipAddress}:${backendPort}`;
 }
+
 
 // Create the Electron window and handle loading URLs
 async function createWindow() {
@@ -69,18 +81,21 @@ async function createWindow() {
         const expressApp = express();
         expressApp.use(express.static(path.join(__dirname, 'dist')));
 
-        const expressServer = expressApp.listen(expressPort, '0.0.0.0', () => {
+        const expressServer = expressApp.listen(expressPort, 'localhost', () => {
             console.log(`Frontend server is running on http://localhost:${expressPort}`);
 
             win.loadURL(`http://localhost:${expressPort}`).catch(err => {
                 console.error("Error loading production build:", err);
             });
+            win.webContents.openDevTools();
         });
+
 
         app.on('before-quit', () => {
             expressServer.close();
             if (serverProcess) serverProcess.kill();
         });
+
     }
 }
 

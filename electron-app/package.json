@@ -1,5 +1,6 @@
 {
-    "name": "Echoed Shadows",
+    "name": "echoed-shadows",
+    "productName": "Echoed Shadows",
     "description": "A Phaser 3 project template that demonstrates React communication and uses Vite for bundling.",
     "version": "1.0.0",
     "main": "main.js",
@@ -61,8 +62,16 @@
             "output": "dist_electron"
         },
         "files": [
-            "dist/**",
-            "main.js"
+            "dist/**",        
+            "main.js",        
+            "preload.js"      
+        ],
+        "extraResources": [
+            {
+                "from": "server",  
+                "to": "server",    
+                "filter": ["**/*"]
+            }
         ]
     }
 }

@@ -1,8 +1,6 @@
-# CMSC 137 Final Project
+# Echoed Shadows
 
-A Phaser 3 project template with ES6 support via [Babel 7](https://babeljs.io/) and [Webpack 4](https://webpack.js.org/), which includes hot-reloading for development and production-ready builds. It also integrates with a backend server and allows for dynamic server configuration using environment variables.
-
-This template is updated for Phaser 3.50.0 and above.
+A Phaser 3 project template that demonstrates React communication and uses Vite for bundling. This project includes hot-reloading for development, production-ready builds, and a backend server integrated into an Electron app.
 
 ## Requirements
 
@@ -10,61 +8,52 @@ This template is updated for Phaser 3.50.0 and above.
 
 ## Project Structure
 
-- `client/` - Contains the Phaser 3 frontend code.
-- `server/` - Contains the backend server code.
-
-## Configuration
-
-1. In the `client/.env` file, the server URL is defined as follows:
-    ```javascript
-      VITE_SERVER_URL='localhost'
-      VITE_SERVER_PORT=5001
-    ```
+- `electron-app/` - Contains both frontend (Phaser 3) and backend (Express server) code.
+- `electron-app/server/` - Contains the backend server code for handling API requests and other server-side logic.
 
 ## Available Commands
 
-From the root directory, navigate into `client/` or `server/` to run the following commands:
+From the `electron-app` directory, you can run the following commands:
 
-| Command                   | Description                                                    |
-|---------------------------|----------------------------------------------------------------|
-| `npm install`             | Install project dependencies for both `client` and `server`.   |
-| `npm start` (in `server`) | Start the backend server.                                      |
-| `npm run dev` (in `client`)| Start the frontend with hot-reloading.                        |
-| `npm run build` (in `client`) | Builds frontend code with production settings.            |
+| Command               | Description                                             |
+|-----------------------|---------------------------------------------------------|
+| `npm install`         | Install project dependencies for the frontend.          |
+| `npm install` (in `server/`) | Install dependencies for the backend server.    |
+| `npm run dev`         | Start the app in development mode with hot-reloading.   |
+| `npm run build`       | Build the frontend with production settings.            |
+| `npm run build-electron` | Build the frontend and package the Electron app.     |
 
 ## Instructions
 
 ### Initial Setup
 
-1. **Install Dependencies:**
-   - From the root directory, install the dependencies for both the client and server.
+1. **Navigate to the App Directory and Install Dependencies:**
+   - From the root directory, navigate to `electron-app` and install the dependencies for both frontend and backend.
      ```bash
-     cd client
+     cd electron-app
      npm install
-     cd ../server
+     cd server
      npm install
+     cd ..
      ```
 
 2. **Run the Project:**
-   - **Frontend:** In the `client` directory, start the development server:
+   - **Development Mode:** Start the development server with hot-reloading:
      ```bash
      npm run dev
      ```
-   - **Backend:** In the `server` directory, start the backend server:
+   - **Build for Production:** To build the frontend and package the Electron app for production, use:
      ```bash
-     npm start
+     npm run build-electron
      ```
-
-   - The frontend will be available at `http://localhost:8080` (default for Webpack), and the backend at `http://localhost:3000` (or whatever IP you set in `.env`).
 
 ### Writing Code
 
-Edit any files in the `client/src` folder, and Webpack will automatically recompile and reload the frontend server.
+Edit any files in the `electron-app/src` folder. Vite will automatically recompile and reload the frontend during development.
 
 ### Building for Production
 
-When ready for deployment, build the frontend by running:
+When ready for deployment, use the following command to build and package the Electron app:
 
 ```bash
-cd client
-npm run build
+npm run build-electron
