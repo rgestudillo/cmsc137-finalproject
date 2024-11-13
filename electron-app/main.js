@@ -71,7 +71,7 @@ async function createWindow() {
         win.loadURL('http://localhost:8080').catch(err => {
             console.error("Failed to load Vite server:", err);
         });
-        win.webContents.openDevTools();
+        // win.webContents.openDevTools();
     } else {
         console.log("Running in production mode");
 
@@ -87,7 +87,7 @@ async function createWindow() {
             win.loadURL(`http://localhost:${expressPort}`).catch(err => {
                 console.error("Error loading production build:", err);
             });
-            win.webContents.openDevTools();
+            // win.webContents.openDevTools();
         });
 
 
