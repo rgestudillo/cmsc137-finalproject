@@ -5,6 +5,7 @@ const io = require('socket.io')(http, {
     origin: '*',  // Allow all origins
   },
 });
+const os = require('os');
 
 let lobbies = {}; // Object to track lobbies
 
@@ -16,6 +17,18 @@ function generateLobbyId() {
     lobbyId += characters.charAt(randomIndex);
   }
   return lobbyId;
+}
+
+function getLocalIpAddress() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const interface of interfaces[name]) {
+      if (interface.family === 'IPv4' && !interface.internal) {
+        return interface.address;
+      }
+    }
+  }
+  return 'localhost';
 }
 
 io.on('connection', (socket) => {
@@ -87,6 +100,8 @@ io.on('connection', (socket) => {
   });
 });
 
-http.listen(5001, () => {
-  console.log('server listening on localhost:5001');
+const port = 5001;
+
+http.listen(port, '0.0.0.0', () => {
+  console.log(`Server listening on http://${getLocalIpAddress()}:${port}`);
 });
