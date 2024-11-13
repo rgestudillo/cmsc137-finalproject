@@ -39,7 +39,7 @@ const Header = () => {
                 Back
             </button>
             <h1 style={{ margin: 0, color: "white", fontSize: "1.5rem" }}>
-                Game App
+                Echoed Shadows
             </h1>{" "}
             {/* White header text */}
         </header>
