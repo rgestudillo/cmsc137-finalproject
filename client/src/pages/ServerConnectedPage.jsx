@@ -3,8 +3,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketContext";
 
-const WelcomePage = () => {
-    const { socket, connectSocket } = useSocket();
+const ServerConnectedPage = () => {
+    const { socket, serverUrl } = useSocket();
     const navigate = useNavigate();
 
     // Handle "Create Lobby" button click
@@ -40,7 +40,18 @@ const WelcomePage = () => {
             <h1 style={{ fontSize: "48px", marginBottom: "20px" }}>
                 Welcome to the Game
             </h1>
-
+            {/* Display the Server URL */}
+            {serverUrl && (
+                <p
+                    style={{
+                        fontSize: "20px",
+                        color: "#aaa",
+                        marginBottom: "20px",
+                    }}
+                >
+                    Connected to: {serverUrl}
+                </p>
+            )}
             <button
                 style={{
                     fontSize: "32px",
@@ -71,4 +82,4 @@ const WelcomePage = () => {
     );
 };
 
-export default WelcomePage;
+export default ServerConnectedPage;
