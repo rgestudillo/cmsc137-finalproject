@@ -2,12 +2,12 @@ import { useRef, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Use Routes instead of Switch
 import Phaser from "phaser";
 import { PhaserGame } from "./game/PhaserGame";
-
+import HomePage from "./pages/HomePage";
 import WaitingPage from "./pages/WaitingPage";
 import LobbyPage from "./pages/LobbyPage";
-import WelcomePage from "./pages/WelcomePage";
+import ServerConnectedPage from "./pages/ServerConnectedPage";
 import Game from "./pages/Game";
-
+import Header from "./components/Header";
 function App() {
     const phaserRef = useRef();
     const [canMoveSprite, setCanMoveSprite] = useState(false);
@@ -20,8 +20,13 @@ function App() {
     return (
         <Router>
             <div id="app">
+                <Header />
                 <Routes>
-                    <Route path="/" element={<WelcomePage />} />
+                    <Route path="/" element={<HomePage />} />
+                    <Route
+                        path="/server-connected"
+                        element={<ServerConnectedPage />}
+                    />
                     <Route path="/join-lobby" element={<LobbyPage />} />
                     <Route path="/waiting" element={<WaitingPage />} />
                     <Route

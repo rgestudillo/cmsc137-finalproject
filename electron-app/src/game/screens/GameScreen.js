@@ -1,6 +1,4 @@
 import Phaser from 'phaser';
-import shipImg from '../assets/ship.png';
-import playerSprite from '../assets/player.png';
 import {
     PLAYER_SPRITE_HEIGHT,
     PLAYER_SPRITE_WIDTH,
@@ -26,12 +24,13 @@ class MyGame extends Phaser.Scene {
     preload() {
         console.log("MyGame scene preloaded");
         console.log("socket is: ", this.socket);
-        this.load.image('ship', shipImg);
-        this.load.spritesheet('player', playerSprite, {
+
+        this.load.image('ship', '/assets/ship.png');
+        this.load.spritesheet('player', '/assets/player.png', {
             frameWidth: PLAYER_SPRITE_WIDTH,
             frameHeight: PLAYER_SPRITE_HEIGHT,
         });
-        this.load.spritesheet('otherPlayer', playerSprite, {
+        this.load.spritesheet('otherPlayer', '/assets/player.png', {
             frameWidth: PLAYER_SPRITE_WIDTH,
             frameHeight: PLAYER_SPRITE_HEIGHT,
         });

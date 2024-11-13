@@ -5,6 +5,7 @@ const io = require('socket.io')(http, {
     origin: '*',  // Allow all origins
   },
 });
+const os = require('os');
 
 let lobbies = {}; // Object to track lobbies
 
@@ -17,6 +18,21 @@ function generateLobbyId() {
   }
   return lobbyId;
 }
+
+function getLocalIpAddress() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return 'localhost';
+}
+
+// Use the PORT from the environment variables or fallback to 5001
+const port = process.env.PORT || 5001;
 
 io.on('connection', (socket) => {
   console.log('player connected');
@@ -54,7 +70,6 @@ io.on('connection', (socket) => {
 
   socket.on('startGame', (lobbyId) => {
     if (lobbies[lobbyId] && lobbies[lobbyId].length === 2) {
-
       io.to(lobbyId).emit('startGame');  // Emit to both players in the lobby
       console.log(`Game started in lobby ${lobbyId}`);
     }
@@ -87,6 +102,6 @@ io.on('connection', (socket) => {
   });
 });
 
-http.listen(5001, () => {
-  console.log('server listening on localhost:5001');
+http.listen(port, '0.0.0.0', () => {
+  console.log(`Server listening on http://${getLocalIpAddress()}:${port}`);
 });
