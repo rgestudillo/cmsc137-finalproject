@@ -194,12 +194,12 @@ class MyGame extends Phaser.Scene {
 
     handleMoveEvent(x, y, isWalking) {
         if (otherPlayer.sprite) {
-
-            if(isWalking){
-                otherPlayer.sprite.isWalking = true;
-            }else{
-                otherPlayer.sprite.isWalking = false;
-            }
+            console.log("is walking in movement is: ", isWalking)
+            // if(isWalking){
+            //     otherPlayer.sprite.isWalking = true;
+            // }else{
+            //     otherPlayer.sprite.isWalking = false;
+            // }
             
             if (otherPlayer.sprite.x > x) {
                 otherPlayer.sprite.flipX = true;
@@ -211,17 +211,14 @@ class MyGame extends Phaser.Scene {
             otherPlayer.sprite.y = y;
             otherPlayer.moving = true;
 
-            if (!otherPlayer.footsteps.isPlaying) {
 
 
-                console.log("footsteps 0");
-
-                if(otherPlayer.sprite.isWalking){
+            if (isWalking) {
+                if (otherPlayer.footsteps.isPlaying) {
                     otherPlayer.footsteps.stop();
-                }else{
-                    otherPlayer.footsteps.play();
                 }
-     
+            } else if (!otherPlayer.footsteps.isPlaying) {
+                otherPlayer.footsteps.play();
             }
         }
     }
@@ -253,13 +250,20 @@ class MyGame extends Phaser.Scene {
             this.updateFogOfWar(player.sprite.x, player.sprite.y);
             // Handle player movement
             const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);;
+            console.log("player is walking: ", player.sprite.isWalking)
             if (playerMoved) {
-                //if (!player.movedLastFrame) player.footsteps.play();
+                if (player.sprite.isWalking) {
+                    if (player.footsteps.isPlaying) {
+                        player.footsteps.stop();
+                    }
+                } else if (!player.footsteps.isPlaying) {
+                    player.footsteps.play();
+                }
                 this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y, isWalking: player.sprite.isWalking });
                 player.movedLastFrame = true;
                 animateMovement(pressedKeys, player.sprite, playerAnimationKey);
             } else {
-                //  if (player.movedLastFrame) player.footsteps.stop();
+                player.footsteps.stop();
                 this.socket.emit('moveEnd', { gameId: this.gameId });
                 player.movedLastFrame = false;
 

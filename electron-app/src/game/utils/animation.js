@@ -1,5 +1,5 @@
 export const animateMovement = (keys, player, animationKey) => {
-    const runningKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+    const runningKeys = ['KeyW', 'KeyS', 'KeyA', 'KeyD'];
     if (
         keys.some((key) => runningKeys.includes(key)) &&
         !player.anims.isPlaying
@@ -12,3 +12,4 @@ export const animateMovement = (keys, player, animationKey) => {
         player.stop(animationKey); // Use the passed animation key
     }
 };
+    

@@ -19,21 +19,21 @@ export const movePlayer = (keys, player, role) => {
     const absPlayerY = player.y + SHIP_HEIGHT / 2 + 20;
 
     if (
-        keys.includes('ArrowUp') &&
+        keys.includes('KeyW') &&
         isWithinMovementBoundaries(absPlayerX, absPlayerY - finalSpeed)
     ) {
         playerMoved = true;
         player.y -= finalSpeed;
     }
     if (
-        keys.includes('ArrowDown') &&
+        keys.includes('KeyS') &&
         isWithinMovementBoundaries(absPlayerX, absPlayerY + finalSpeed)
     ) {
         playerMoved = true;
         player.y += finalSpeed;
     }
     if (
-        keys.includes('ArrowLeft') &&
+        keys.includes('KeyA') &&
         isWithinMovementBoundaries(absPlayerX - finalSpeed, absPlayerY)
     ) {
         playerMoved = true;
@@ -41,7 +41,7 @@ export const movePlayer = (keys, player, role) => {
         player.flipX = true;
     }
     if (
-        keys.includes('ArrowRight') &&
+        keys.includes('KeyD') &&
         isWithinMovementBoundaries(absPlayerX + finalSpeed, absPlayerY)
     ) {
         playerMoved = true;
