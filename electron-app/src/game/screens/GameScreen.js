@@ -230,7 +230,7 @@ class MyGame extends Phaser.Scene {
             this.updateFogOfWar(player.sprite.x, player.sprite.y);
 
             // Handle player movement
-            const playerMoved = movePlayer(pressedKeys, player.sprite);
+            const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);;
 
             if (playerMoved) {
                 if (!player.movedLastFrame) player.footsteps.play();
