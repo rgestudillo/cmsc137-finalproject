@@ -6,7 +6,6 @@ import {
     PLAYER_WIDTH,
     PLAYER_START_X,
     PLAYER_START_Y,
-
     GHOST_SPRITE_HEIGHT,
     GHOST_SPRITE_WIDTH,
     GHOST_START_X,
@@ -43,7 +42,6 @@ class MyGame extends Phaser.Scene {
             frameHeight: GHOST_SPRITE_HEIGHT,
         });
         this.load.audio('footsteps', '/assets/walk.wav'); // Replace with your actual file path
-
     }
 
     create() {
@@ -52,29 +50,26 @@ class MyGame extends Phaser.Scene {
         // Emit joinLobby event with gameId
         this.socket.emit('joinLobby', this.gameId);
 
-
         this.socket.on('lobbyFull', () => {
             this.setupGame();
         });
 
-        // Show error message and do not proceed with setup if game not found
         this.socket.on('lobbyNotFound', () => {
             this.showInvalidGameMessage('Game not found');
         });
 
-        // Proceed with game setup only if lobby is valid
         this.socket.on('opponentConnected', () => {
             this.setupGame();
         });
 
         player.footsteps = this.sound.add('footsteps', {
-            loop: true,  // Loop the audio so it plays continuously while moving
-            volume: 0.5, // Adjust volume as needed
+            loop: true,
+            volume: 0.5,
         });
         otherPlayer.footsteps = this.sound.add('footsteps', {
             loop: true,
-            volume: 0.5, // Base volume
-            pan: 0,      // Center pan (adjust dynamically later)
+            volume: 0.5,
+            pan: 0,
         });
     }
 
@@ -90,51 +85,43 @@ class MyGame extends Phaser.Scene {
 
         const ship = this.add.image(0, 0, 'ship');
 
-        // Configure the player's sprite based on their role
+        // Dynamic animation keys
+        const playerAnimationKey = this.role === 'player' ? 'player-running' : 'ghost-running';
+        const otherPlayerAnimationKey = this.role === 'player' ? 'ghost-running' : 'player-running';
+
         if (this.role === 'player') {
             player.sprite = this.add.sprite(PLAYER_START_X, PLAYER_START_Y, 'player');
             player.sprite.displayHeight = PLAYER_HEIGHT;
             player.sprite.displayWidth = PLAYER_WIDTH;
 
-            otherPlayer.sprite = this.add.sprite(
-                PLAYER_START_X,
-                PLAYER_START_Y,
-                'otherPlayer'
-            );
+            otherPlayer.sprite = this.add.sprite(GHOST_START_X, GHOST_START_Y, 'otherPlayer');
             otherPlayer.sprite.displayHeight = GHOST_HEIGHT;
             otherPlayer.sprite.displayWidth = GHOST_WIDTH;
-
-            // Create animation for the player
-            this.anims.create({
-                key: 'running',
-                frames: this.anims.generateFrameNumbers('player'),
-                frameRate: 24,
-                repeat: -1,
-            });
-
         } else if (this.role === 'ghost') {
-            player.sprite = this.add.sprite(PLAYER_START_X, PLAYER_START_Y, 'otherPlayer');
+            player.sprite = this.add.sprite(GHOST_START_X, GHOST_START_Y, 'otherPlayer');
             player.sprite.displayHeight = GHOST_HEIGHT;
             player.sprite.displayWidth = GHOST_WIDTH;
 
-            otherPlayer.sprite = this.add.sprite(
-                PLAYER_START_X,
-                PLAYER_START_Y,
-                'player'
-            );
+            otherPlayer.sprite = this.add.sprite(PLAYER_START_X, PLAYER_START_Y, 'player');
             otherPlayer.sprite.displayHeight = PLAYER_HEIGHT;
             otherPlayer.sprite.displayWidth = PLAYER_WIDTH;
-
-            // Create animation for the ghost
-            this.anims.create({
-                key: 'running',
-                frames: this.anims.generateFrameNumbers('otherPlayer'),
-                frameRate: 24,
-                repeat: -1,
-            });
         }
 
-        // Input handling
+        // Create animations for player and other player
+        this.anims.create({
+            key: playerAnimationKey,
+            frames: this.anims.generateFrameNumbers(player.sprite.texture.key),
+            frameRate: 24,
+            repeat: -1,
+        });
+
+        this.anims.create({
+            key: otherPlayerAnimationKey,
+            frames: this.anims.generateFrameNumbers(otherPlayer.sprite.texture.key),
+            frameRate: 24,
+            repeat: -1,
+        });
+
         this.input.keyboard.on('keydown', (e) => {
             if (!pressedKeys.includes(e.code)) {
                 pressedKeys.push(e.code);
@@ -144,116 +131,74 @@ class MyGame extends Phaser.Scene {
             pressedKeys = pressedKeys.filter((key) => key !== e.code);
         });
 
-        // Handle move event
         this.socket.on('move', ({ x, y }) => {
             console.log('Received move');
-            if (otherPlayer.sprite.x > x) {
-                otherPlayer.sprite.flipX = true;
-            } else if (otherPlayer.sprite.x < x) {
-                otherPlayer.sprite.flipX = false;
-            }
-            otherPlayer.sprite.x = x;
-            otherPlayer.sprite.y = y;
+            otherPlayer.sprite.setPosition(x, y);
             otherPlayer.moving = true;
 
-            // Start playing footsteps if not already playing
             if (!otherPlayer.footsteps.isPlaying) {
                 otherPlayer.footsteps.play();
             }
         });
 
-        // Handle moveEnd event
         this.socket.on('moveEnd', () => {
             console.log('Received moveEnd');
             otherPlayer.moving = false;
 
-            // Stop playing footsteps
             if (otherPlayer.footsteps.isPlaying) {
                 otherPlayer.footsteps.stop();
             }
         });
 
         this.hearingRange = this.add.graphics({ lineStyle: { width: 2, color: 0x00ff00, alpha: 1 } });
-        this.hearingRange.setDepth(10); // Ensure the circle is rendered above other lower-depth objects
+        this.hearingRange.setDepth(10);
     }
 
-
     update() {
-        // Ensure player.sprite is defined before accessing its properties
         if (player.sprite) {
+            const playerAnimationKey = this.role === 'player' ? 'player-running' : 'ghost-running';
 
-            // temporary radius
-            const playerPosition = { x: player.sprite.x, y: player.sprite.y };
-            const maxHearingRange = 300; // Your hearing range
-            this.hearingRange.clear();
-            this.hearingRange.strokeCircle(playerPosition.x, playerPosition.y, maxHearingRange);
-
-
-            // Update camera position to follow the player sprite
             this.scene.scene.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
             const playerMoved = movePlayer(pressedKeys, player.sprite);
 
             if (playerMoved) {
                 if (!player.movedLastFrame) {
-                    player.footsteps.play(); // Play the audio when the player starts moving
+                    player.footsteps.play();
                 }
                 this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y });
                 player.movedLastFrame = true;
+
+                animateMovement(pressedKeys, player.sprite, playerAnimationKey);
             } else {
                 if (player.movedLastFrame) {
                     player.footsteps.stop();
                     this.socket.emit('moveEnd', { gameId: this.gameId });
                 }
                 player.movedLastFrame = false;
+
+                player.sprite.stop(playerAnimationKey);
             }
 
-            // Call animateMovement only if player.sprite and anims are initialized
-            if (player.sprite.anims) {
-                animateMovement(pressedKeys, player.sprite);
-            }
+            const maxHearingRange = 300;
+            this.hearingRange.clear();
+            this.hearingRange.strokeCircle(player.sprite.x, player.sprite.y, maxHearingRange);
         }
 
-        // Ensure otherPlayer.sprite is defined before accessing its properties
         if (otherPlayer.sprite) {
-            // Animate other player
-            if (otherPlayer.moving && otherPlayer.sprite.anims && !otherPlayer.sprite.anims.isPlaying) {
-                otherPlayer.sprite.play('running');
-            } else if (!otherPlayer.moving && otherPlayer.sprite.anims && otherPlayer.sprite.anims.isPlaying) {
-                otherPlayer.sprite.stop('running');
-            }
-        }
+            const otherPlayerAnimationKey = this.role === 'player' ? 'ghost-running' : 'player-running';
 
-        if (player.sprite && otherPlayer.sprite) {
-            const playerPosition = { x: player.sprite.x, y: player.sprite.y };
-            const otherPlayerPosition = { x: otherPlayer.sprite.x, y: otherPlayer.sprite.y };
-
-            // Calculate distance between player and other player
-            const dx = otherPlayerPosition.x - playerPosition.x;
-            const dy = otherPlayerPosition.y - playerPosition.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            // Define maximum hearing range and adjust volume accordingly
-            const maxHearingRange = 300; // Adjust this value to your game's scale
-            const volume = Phaser.Math.Clamp(1 - distance / maxHearingRange, 0, 1);
-
-            // Calculate pan (-1 for full left, 1 for full right, 0 for center)
-            const pan = Phaser.Math.Clamp(dx / maxHearingRange, -1, 1);
-
-            // Update the footsteps audio properties
-            otherPlayer.footsteps.setVolume(volume);
-            otherPlayer.footsteps.setPan(pan);
-
-            // Play footsteps if other player is moving
-            if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {
-                otherPlayer.footsteps.play();
-            } else if (!otherPlayer.moving && otherPlayer.footsteps.isPlaying) {
-                otherPlayer.footsteps.stop();
+            if (otherPlayer.moving) {
+                if (!otherPlayer.sprite.anims.isPlaying) {
+                    otherPlayer.sprite.play(otherPlayerAnimationKey);
+                }
+            } else {
+                if (otherPlayer.sprite.anims.isPlaying) {
+                    otherPlayer.sprite.stop(otherPlayerAnimationKey);
+                }
             }
         }
     }
-
-
 }
 
 export default MyGame;
