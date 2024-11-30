@@ -42,6 +42,8 @@ class MyGame extends Phaser.Scene {
             frameWidth: GHOST_SPRITE_WIDTH,
             frameHeight: GHOST_SPRITE_HEIGHT,
         });
+        this.load.audio('footsteps', '/assets/walk.wav'); // Replace with your actual file path
+
     }
 
     create() {
@@ -62,7 +64,17 @@ class MyGame extends Phaser.Scene {
 
         // Proceed with game setup only if lobby is valid
         this.socket.on('opponentConnected', () => {
-            this.setupGame();
+            this.setupGame();x
+        });
+
+        player.footsteps = this.sound.add('footsteps', {
+            loop: true,  // Loop the audio so it plays continuously while moving
+            volume: 0.5, // Adjust volume as needed
+        });
+        otherPlayer.footsteps = this.sound.add('footsteps', {
+            loop: true,
+            volume: 0.5, // Base volume
+            pan: 0,      // Center pan (adjust dynamically later)
         });
     }
 
@@ -143,29 +155,54 @@ class MyGame extends Phaser.Scene {
             otherPlayer.sprite.x = x;
             otherPlayer.sprite.y = y;
             otherPlayer.moving = true;
+
+            // Start playing footsteps if not already playing
+            if (!otherPlayer.footsteps.isPlaying) {
+                otherPlayer.footsteps.play();
+            }
         });
 
         // Handle moveEnd event
         this.socket.on('moveEnd', () => {
             console.log('Received moveEnd');
             otherPlayer.moving = false;
+
+            // Stop playing footsteps
+            if (otherPlayer.footsteps.isPlaying) {
+                otherPlayer.footsteps.stop();
+            }
         });
+        
+        this.hearingRange = this.add.graphics({ lineStyle: { width: 2, color: 0x00ff00, alpha: 1 } });
+        this.hearingRange.setDepth(10); // Ensure the circle is rendered above other lower-depth objects
     }
 
 
     update() {
         // Ensure player.sprite is defined before accessing its properties
         if (player.sprite) {
+
+            // temporary radius
+            const playerPosition = { x: player.sprite.x, y: player.sprite.y };
+            const maxHearingRange = 300; // Your hearing range
+            this.hearingRange.clear();
+            this.hearingRange.strokeCircle(playerPosition.x, playerPosition.y, maxHearingRange);
+
+
             // Update camera position to follow the player sprite
             this.scene.scene.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
             const playerMoved = movePlayer(pressedKeys, player.sprite);
 
             if (playerMoved) {
+                if (!player.movedLastFrame) {
+                    player.footsteps.play(); // Play the audio when the player starts moving
+                }
                 this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y });
                 player.movedLastFrame = true;
             } else {
                 if (player.movedLastFrame) {
+                    player.footsteps.stop();
                     this.socket.emit('moveEnd', { gameId: this.gameId });
                 }
                 player.movedLastFrame = false;
@@ -184,6 +221,34 @@ class MyGame extends Phaser.Scene {
                 otherPlayer.sprite.play('running');
             } else if (!otherPlayer.moving && otherPlayer.sprite.anims && otherPlayer.sprite.anims.isPlaying) {
                 otherPlayer.sprite.stop('running');
+            }
+        }
+
+        if (player.sprite && otherPlayer.sprite) {
+            const playerPosition = { x: player.sprite.x, y: player.sprite.y };
+            const otherPlayerPosition = { x: otherPlayer.sprite.x, y: otherPlayer.sprite.y };
+        
+            // Calculate distance between player and other player
+            const dx = otherPlayerPosition.x - playerPosition.x;
+            const dy = otherPlayerPosition.y - playerPosition.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+        
+            // Define maximum hearing range and adjust volume accordingly
+            const maxHearingRange = 300; // Adjust this value to your game's scale
+            const volume = Phaser.Math.Clamp(1 - distance / maxHearingRange, 0, 1);
+        
+            // Calculate pan (-1 for full left, 1 for full right, 0 for center)
+            const pan = Phaser.Math.Clamp(dx / maxHearingRange, -1, 1);
+        
+            // Update the footsteps audio properties
+            otherPlayer.footsteps.setVolume(volume);
+            otherPlayer.footsteps.setPan(pan);
+        
+            // Play footsteps if other player is moving
+            if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {
+                otherPlayer.footsteps.play();
+            } else if (!otherPlayer.moving && otherPlayer.footsteps.isPlaying) {
+                otherPlayer.footsteps.stop();
             }
         }
     }
