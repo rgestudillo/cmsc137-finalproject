@@ -64,7 +64,7 @@ class MyGame extends Phaser.Scene {
 
         // Proceed with game setup only if lobby is valid
         this.socket.on('opponentConnected', () => {
-            this.setupGame();x
+            this.setupGame();
         });
 
         player.footsteps = this.sound.add('footsteps', {
@@ -172,7 +172,7 @@ class MyGame extends Phaser.Scene {
                 otherPlayer.footsteps.stop();
             }
         });
-        
+
         this.hearingRange = this.add.graphics({ lineStyle: { width: 2, color: 0x00ff00, alpha: 1 } });
         this.hearingRange.setDepth(10); // Ensure the circle is rendered above other lower-depth objects
     }
@@ -227,23 +227,23 @@ class MyGame extends Phaser.Scene {
         if (player.sprite && otherPlayer.sprite) {
             const playerPosition = { x: player.sprite.x, y: player.sprite.y };
             const otherPlayerPosition = { x: otherPlayer.sprite.x, y: otherPlayer.sprite.y };
-        
+
             // Calculate distance between player and other player
             const dx = otherPlayerPosition.x - playerPosition.x;
             const dy = otherPlayerPosition.y - playerPosition.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
-        
+
             // Define maximum hearing range and adjust volume accordingly
             const maxHearingRange = 300; // Adjust this value to your game's scale
             const volume = Phaser.Math.Clamp(1 - distance / maxHearingRange, 0, 1);
-        
+
             // Calculate pan (-1 for full left, 1 for full right, 0 for center)
             const pan = Phaser.Math.Clamp(dx / maxHearingRange, -1, 1);
-        
+
             // Update the footsteps audio properties
             otherPlayer.footsteps.setVolume(volume);
             otherPlayer.footsteps.setPan(pan);
-        
+
             // Play footsteps if other player is moving
             if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {
                 otherPlayer.footsteps.play();
