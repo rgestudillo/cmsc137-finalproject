@@ -67,6 +67,7 @@ class MyGame extends Phaser.Scene {
         // Add sound effects
         player.footsteps = this.sound.add('footsteps', { loop: true, volume: 0.5 });
         otherPlayer.footsteps = this.sound.add('footsteps', { loop: true, volume: 0.5, pan: 0 });
+        player.isWalking = false;
 
         // Mask the screen black
         this.createScreenMask();
@@ -157,7 +158,7 @@ class MyGame extends Phaser.Scene {
         this.hearingRange.setDepth(10);
 
         // Handle move events from the server
-        this.socket.on('move', ({ x, y }) => this.handleMoveEvent(x, y));
+        this.socket.on('move', ({ x, y, isWalking }) => this.handleMoveEvent(x, y, isWalking));
         this.socket.on('moveEnd', () => this.handleMoveEnd());
     }
 
@@ -191,8 +192,14 @@ class MyGame extends Phaser.Scene {
         });
     }
 
-    handleMoveEvent(x, y) {
+    handleMoveEvent(x, y, isWalking) {
         if (otherPlayer.sprite) {
+
+            if(isWalking){
+                otherPlayer.sprite.isWalking = true;
+            }else{
+                otherPlayer.sprite.isWalking = false;
+            }
             
             if (otherPlayer.sprite.x > x) {
                 otherPlayer.sprite.flipX = true;
@@ -205,12 +212,21 @@ class MyGame extends Phaser.Scene {
             otherPlayer.moving = true;
 
             if (!otherPlayer.footsteps.isPlaying) {
-                otherPlayer.footsteps.play();
+
+
+                console.log("footsteps 0");
+
+                if(otherPlayer.sprite.isWalking){
+                    otherPlayer.footsteps.stop();
+                }else{
+                    otherPlayer.footsteps.play();
+                }
+     
             }
         }
     }
 
-    handleMoveEnd() {
+    handleMoveEnd() {   
         if (otherPlayer.sprite) {
             otherPlayer.moving = false;
 
@@ -235,17 +251,15 @@ class MyGame extends Phaser.Scene {
 
             // Update fog of war mask
             this.updateFogOfWar(player.sprite.x, player.sprite.y);
-
             // Handle player movement
             const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);;
-
             if (playerMoved) {
-                if (!player.movedLastFrame) player.footsteps.play();
-                this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y });
+                //if (!player.movedLastFrame) player.footsteps.play();
+                this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y, isWalking: player.sprite.isWalking });
                 player.movedLastFrame = true;
                 animateMovement(pressedKeys, player.sprite, playerAnimationKey);
             } else {
-                if (player.movedLastFrame) player.footsteps.stop();
+                //  if (player.movedLastFrame) player.footsteps.stop();
                 this.socket.emit('moveEnd', { gameId: this.gameId });
                 player.movedLastFrame = false;
 
@@ -301,13 +315,13 @@ class MyGame extends Phaser.Scene {
             // Update the footsteps audio properties
             otherPlayer.footsteps.setVolume(volume);
             otherPlayer.footsteps.setPan(pan);
-
+    
             // Play or stop footsteps based on movement
-            if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {
-                otherPlayer.footsteps.play();
-            } else if (!otherPlayer.moving && otherPlayer.footsteps.isPlaying) {
-                otherPlayer.footsteps.stop();
-            }
+            // if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {   
+            //     otherPlayer.footsteps.play();
+            // } else if (!otherPlayer.moving && otherPlayer.footsteps.isPlaying) {
+            //     otherPlayer.footsteps.stop();
+            // }
         }
 
         // Call updateHearingRange to update the visual
