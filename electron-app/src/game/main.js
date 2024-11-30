@@ -1,8 +1,7 @@
 import Phaser from "phaser";
 import GameScreen from "./screens/GameScreen";
+import GameOverScreen from "./screens/GameOverScreen";
 
-// Find out more information about the Game Config at:
-// https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config = {
     type: Phaser.AUTO,
     parent: "game-container",
@@ -10,11 +9,14 @@ const config = {
     height: 450,
 };
 
-const StartGame = (parent, socket, role) => {
+const StartGame = (parent, socket, role, navigateCallback) => {
     return new Phaser.Game({
         ...config,
         parent,
-        scene: [new GameScreen({ socket, role })], // Pass socket and role to GameScreen
+        scene: [
+            new GameScreen({ socket, role }), // Pass socket and role to GameScreen
+            new GameOverScreen(navigateCallback), // Pass navigateCallback to GameOverScreen
+        ],
     });
 };
 

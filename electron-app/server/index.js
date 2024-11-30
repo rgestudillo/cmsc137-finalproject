@@ -110,6 +110,12 @@ io.on('connection', (socket) => {
     socket.on('moveEnd', ({ gameId }) => {
         socket.to(`${gameId}`).emit('moveEnd');  // Broadcast only within the specific game lobby
     });
+
+    socket.on('gameOver', ({ gameId }) => {
+        console.log(`Game Over event in game ${gameId}`);
+        io.to(gameId).emit('gameOver'); // Notify all players in the game
+    });
+
 });
 
 http.listen(port, '0.0.0.0', () => {

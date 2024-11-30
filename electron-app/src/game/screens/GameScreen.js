@@ -16,8 +16,8 @@ import {
 import { movePlayer } from '../utils/movement';
 import { animateMovement } from '../utils/animation';
 
-const player = {};
-const otherPlayer = {};
+let player = {};
+let otherPlayer = {};
 let pressedKeys = [];
 
 class MyGame extends Phaser.Scene {
@@ -47,40 +47,61 @@ class MyGame extends Phaser.Scene {
     create() {
         console.log("MyGame scene created", this.gameId.toString());
 
+        // Reset game state
+        player = {};
+        otherPlayer = {};
+        pressedKeys = [];
+
         // Emit joinLobby event with gameId
         this.socket.emit('joinLobby', this.gameId);
 
-        this.socket.on('lobbyFull', () => {
-            this.setupGame();
-        });
+        // Remove existing listeners to prevent duplication
+        this.cleanupSocketListeners();
 
-        this.socket.on('lobbyNotFound', () => {
-            this.showInvalidGameMessage('Game not found');
-        });
+        // Handle server events
+        this.socket.on('lobbyFull', () => this.setupGame());
+        this.socket.on('lobbyNotFound', () => this.showInvalidGameMessage('Game not found'));
+        this.socket.on('opponentConnected', () => this.setupGame());
+        this.socket.on('gameOver', () => this.showGameOverScreen());
 
-        this.socket.on('opponentConnected', () => {
-            this.setupGame();
-        });
+        // Add sound effects
+        player.footsteps = this.sound.add('footsteps', { loop: true, volume: 0.5 });
+        otherPlayer.footsteps = this.sound.add('footsteps', { loop: true, volume: 0.5, pan: 0 });
 
-        player.footsteps = this.sound.add('footsteps', {
-            loop: true,
-            volume: 0.5,
-        });
-        otherPlayer.footsteps = this.sound.add('footsteps', {
-            loop: true,
-            volume: 0.5,
-            pan: 0,
-        });
+        // Clean up resources when scene shuts down
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanupScene());
+    }
+
+    cleanupSocketListeners() {
+        this.socket.off('lobbyFull');
+        this.socket.off('lobbyNotFound');
+        this.socket.off('opponentConnected');
+        this.socket.off('gameOver');
+    }
+
+    cleanupScene() {
+        console.log("Cleaning up scene and socket listeners.");
+        this.cleanupSocketListeners();
+        if (this.hearingRange) this.hearingRange.destroy();
+        if (player.sprite) player.sprite.destroy();
+        if (otherPlayer.sprite) otherPlayer.sprite.destroy();
     }
 
     showInvalidGameMessage(message) {
-        const text = this.add.text(400, 225, message, {
+        this.add.text(400, 225, message, {
             font: '32px Arial',
             fill: '#ff0000',
         }).setOrigin(0.5);
     }
 
     setupGame() {
+        if (!this.scene || !this.sys.isActive()) {
+            console.warn("Attempted to setup game in an inactive or non-existent scene.");
+            return;
+        }
+
+        // Game setup logic continues here...
+        console.log("Setting up the game...");
         console.log("My role is: ", this.role);
 
         const ship = this.add.image(0, 0, 'ship');
@@ -89,119 +110,147 @@ class MyGame extends Phaser.Scene {
         const playerAnimationKey = this.role === 'player' ? 'player-running' : 'ghost-running';
         const otherPlayerAnimationKey = this.role === 'player' ? 'ghost-running' : 'player-running';
 
+        // Setup player and other player sprites
         if (this.role === 'player') {
-            player.sprite = this.add.sprite(PLAYER_START_X, PLAYER_START_Y, 'player');
-            player.sprite.displayHeight = PLAYER_HEIGHT;
-            player.sprite.displayWidth = PLAYER_WIDTH;
-
-            otherPlayer.sprite = this.add.sprite(GHOST_START_X, GHOST_START_Y, 'otherPlayer');
-            otherPlayer.sprite.displayHeight = GHOST_HEIGHT;
-            otherPlayer.sprite.displayWidth = GHOST_WIDTH;
-        } else if (this.role === 'ghost') {
-            player.sprite = this.add.sprite(GHOST_START_X, GHOST_START_Y, 'otherPlayer');
-            player.sprite.displayHeight = GHOST_HEIGHT;
-            player.sprite.displayWidth = GHOST_WIDTH;
-
-            otherPlayer.sprite = this.add.sprite(PLAYER_START_X, PLAYER_START_Y, 'player');
-            otherPlayer.sprite.displayHeight = PLAYER_HEIGHT;
-            otherPlayer.sprite.displayWidth = PLAYER_WIDTH;
+            player.sprite = this.createSprite(PLAYER_START_X, PLAYER_START_Y, 'player', PLAYER_WIDTH, PLAYER_HEIGHT);
+            otherPlayer.sprite = this.createSprite(GHOST_START_X, GHOST_START_Y, 'otherPlayer', GHOST_WIDTH, GHOST_HEIGHT);
+        } else {
+            player.sprite = this.createSprite(GHOST_START_X, GHOST_START_Y, 'otherPlayer', GHOST_WIDTH, GHOST_HEIGHT);
+            otherPlayer.sprite = this.createSprite(PLAYER_START_X, PLAYER_START_Y, 'player', PLAYER_WIDTH, PLAYER_HEIGHT);
         }
 
-        // Create animations for player and other player
-        this.anims.create({
-            key: playerAnimationKey,
-            frames: this.anims.generateFrameNumbers(player.sprite.texture.key),
-            frameRate: 24,
-            repeat: -1,
-        });
+        // Create animations safely
+        this.createAnimation(playerAnimationKey, player.sprite.texture.key);
+        this.createAnimation(otherPlayerAnimationKey, otherPlayer.sprite.texture.key);
 
-        this.anims.create({
-            key: otherPlayerAnimationKey,
-            frames: this.anims.generateFrameNumbers(otherPlayer.sprite.texture.key),
-            frameRate: 24,
-            repeat: -1,
-        });
+        // Input handling
+        this.setupInput();
 
+        // Graphics for hearing range
+        this.hearingRange = this.add.graphics({ lineStyle: { width: 2, color: 0x00ff00, alpha: 1 } });
+        this.hearingRange.setDepth(10);
+
+        // Handle move events from the server
+        this.socket.on('move', ({ x, y }) => this.handleMoveEvent(x, y));
+        this.socket.on('moveEnd', () => this.handleMoveEnd());
+    }
+
+    createSprite(x, y, texture, width, height) {
+        const sprite = this.add.sprite(x, y, texture);
+        sprite.displayWidth = width;
+        sprite.displayHeight = height;
+        return sprite;
+    }
+
+    createAnimation(key, textureKey) {
+        if (!this.anims.exists(key)) {
+            this.anims.create({
+                key,
+                frames: this.anims.generateFrameNumbers(textureKey),
+                frameRate: 24,
+                repeat: -1,
+            });
+        }
+    }
+
+    setupInput() {
         this.input.keyboard.on('keydown', (e) => {
             if (!pressedKeys.includes(e.code)) {
                 pressedKeys.push(e.code);
             }
         });
+
         this.input.keyboard.on('keyup', (e) => {
             pressedKeys = pressedKeys.filter((key) => key !== e.code);
         });
+    }
 
-        this.socket.on('move', ({ x, y }) => {
-            console.log('Received move');
-            if (otherPlayer.sprite.x > x) {
-                otherPlayer.sprite.flipX = true;
-            } else if (otherPlayer.sprite.x < x) {
-                otherPlayer.sprite.flipX = false;
-            }
-            otherPlayer.sprite.x = x;
-            otherPlayer.sprite.y = y;
+    handleMoveEvent(x, y) {
+        if (otherPlayer.sprite) {
+            otherPlayer.sprite.flipX = otherPlayer.sprite.x > x;
+            otherPlayer.sprite.setPosition(x, y);
             otherPlayer.moving = true;
 
             if (!otherPlayer.footsteps.isPlaying) {
                 otherPlayer.footsteps.play();
             }
-        });
+        }
+    }
 
-        this.socket.on('moveEnd', () => {
-            console.log('Received moveEnd');
+    handleMoveEnd() {
+        if (otherPlayer.sprite) {
             otherPlayer.moving = false;
 
             if (otherPlayer.footsteps.isPlaying) {
                 otherPlayer.footsteps.stop();
             }
-        });
+        }
+    }
 
-        this.hearingRange = this.add.graphics({ lineStyle: { width: 2, color: 0x00ff00, alpha: 1 } });
-        this.hearingRange.setDepth(10);
+    showGameOverScreen() {
+        this.scene.stop();
+        this.scene.start('GameOverScreen');
     }
 
     update() {
         if (player.sprite) {
             const playerAnimationKey = this.role === 'player' ? 'player-running' : 'ghost-running';
 
-            this.scene.scene.cameras.main.centerOn(player.sprite.x, player.sprite.y);
+            // Center camera on player
+            this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
+            // Handle player movement
             const playerMoved = movePlayer(pressedKeys, player.sprite);
 
             if (playerMoved) {
-                if (!player.movedLastFrame) {
-                    player.footsteps.play();
-                }
+                if (!player.movedLastFrame) player.footsteps.play();
                 this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y });
                 player.movedLastFrame = true;
-
                 animateMovement(pressedKeys, player.sprite, playerAnimationKey);
             } else {
-                if (player.movedLastFrame) {
-                    player.footsteps.stop();
-                    this.socket.emit('moveEnd', { gameId: this.gameId });
-                }
+                if (player.movedLastFrame) player.footsteps.stop();
+                this.socket.emit('moveEnd', { gameId: this.gameId });
                 player.movedLastFrame = false;
 
-                player.sprite.stop(playerAnimationKey);
+                // Stop the walking animation when not moving
+                if (player.sprite.anims && player.sprite.anims.isPlaying) {
+                    player.sprite.stop();
+                }
             }
 
-            const maxHearingRange = 300;
-            this.hearingRange.clear();
-            this.hearingRange.strokeCircle(player.sprite.x, player.sprite.y, maxHearingRange);
+            this.updateHearingRange();
         }
 
         if (otherPlayer.sprite) {
             const otherPlayerAnimationKey = this.role === 'player' ? 'ghost-running' : 'player-running';
+            if (otherPlayer.moving && !otherPlayer.sprite.anims?.isPlaying) {
+                otherPlayer.sprite.play(otherPlayerAnimationKey);
+            } else if (!otherPlayer.moving && otherPlayer.sprite.anims?.isPlaying) {
+                otherPlayer.sprite.stop(otherPlayerAnimationKey);
+            }
+        }
 
-            if (otherPlayer.moving) {
-                if (otherPlayer.sprite.anims && !otherPlayer.sprite.anims.isPlaying) {
-                    otherPlayer.sprite.play(otherPlayerAnimationKey);
-                }
-            } else {
-                if (otherPlayer.sprite.anims && otherPlayer.sprite.anims.isPlaying) {
-                    otherPlayer.sprite.stop(otherPlayerAnimationKey);
-                }
+        // Handle ghost attack logic
+        if (this.role === 'ghost' && Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('SPACE'))) {
+            this.handleGhostAttack();
+        }
+    }
+
+    updateHearingRange() {
+        if (this.hearingRange && player.sprite) {
+            this.hearingRange.clear();
+            this.hearingRange.strokeCircle(player.sprite.x, player.sprite.y, 300);
+        }
+    }
+
+    handleGhostAttack() {
+        if (player.sprite && otherPlayer.sprite) {
+            const dx = otherPlayer.sprite.x - player.sprite.x;
+            const dy = otherPlayer.sprite.y - player.sprite.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance <= 20) {
+                this.socket.emit('gameOver', { gameId: this.gameId });
             }
         }
     }
