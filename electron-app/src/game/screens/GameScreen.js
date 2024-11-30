@@ -6,6 +6,13 @@ import {
     PLAYER_WIDTH,
     PLAYER_START_X,
     PLAYER_START_Y,
+
+    GHOST_SPRITE_HEIGHT,
+    GHOST_SPRITE_WIDTH,
+    GHOST_START_X,
+    GHOST_START_Y,
+    GHOST_WIDTH,
+    GHOST_HEIGHT
 } from '../utils/constants';
 import { movePlayer } from '../utils/movement';
 import { animateMovement } from '../utils/animation';
@@ -15,10 +22,11 @@ const otherPlayer = {};
 let pressedKeys = [];
 
 class MyGame extends Phaser.Scene {
-    constructor(socket) {
-        super('MyGame');
-        this.socket = socket;  // Store the socket
-        this.gameId = window.location.pathname.split('/')[2]; // Extract gameId from URL
+    constructor({ socket, role }) {
+        super("MyGame");
+        this.socket = socket; // Store the socket
+        this.role = role; // Store the role
+        this.gameId = window.location.pathname.split("/")[2]; // Extract gameId from URL
     }
 
     preload() {
@@ -30,9 +38,9 @@ class MyGame extends Phaser.Scene {
             frameWidth: PLAYER_SPRITE_WIDTH,
             frameHeight: PLAYER_SPRITE_HEIGHT,
         });
-        this.load.spritesheet('otherPlayer', '/assets/player.png', {
-            frameWidth: PLAYER_SPRITE_WIDTH,
-            frameHeight: PLAYER_SPRITE_HEIGHT,
+        this.load.spritesheet('otherPlayer', '/assets/ghost.png', {
+            frameWidth: GHOST_SPRITE_WIDTH,
+            frameHeight: GHOST_SPRITE_HEIGHT,
         });
     }
 
@@ -66,25 +74,55 @@ class MyGame extends Phaser.Scene {
     }
 
     setupGame() {
+        console.log("My role is: ", this.role);
+
         const ship = this.add.image(0, 0, 'ship');
-        player.sprite = this.add.sprite(PLAYER_START_X, PLAYER_START_Y, 'player');
-        player.sprite.displayHeight = PLAYER_HEIGHT;
-        player.sprite.displayWidth = PLAYER_WIDTH;
-        otherPlayer.sprite = this.add.sprite(
-            PLAYER_START_X,
-            PLAYER_START_Y,
-            'otherPlayer',
-        );
-        otherPlayer.sprite.displayHeight = PLAYER_HEIGHT;
-        otherPlayer.sprite.displayWidth = PLAYER_WIDTH;
 
-        this.anims.create({
-            key: 'running',
-            frames: this.anims.generateFrameNumbers('player'),
-            frameRate: 24,
-            repeat: -1,
-        });
+        // Configure the player's sprite based on their role
+        if (this.role === 'player') {
+            player.sprite = this.add.sprite(PLAYER_START_X, PLAYER_START_Y, 'player');
+            player.sprite.displayHeight = PLAYER_HEIGHT;
+            player.sprite.displayWidth = PLAYER_WIDTH;
 
+            otherPlayer.sprite = this.add.sprite(
+                PLAYER_START_X,
+                PLAYER_START_Y,
+                'otherPlayer'
+            );
+            otherPlayer.sprite.displayHeight = GHOST_HEIGHT;
+            otherPlayer.sprite.displayWidth = GHOST_WIDTH;
+
+            // Create animation for the player
+            this.anims.create({
+                key: 'running',
+                frames: this.anims.generateFrameNumbers('player'),
+                frameRate: 24,
+                repeat: -1,
+            });
+
+        } else if (this.role === 'ghost') {
+            player.sprite = this.add.sprite(PLAYER_START_X, PLAYER_START_Y, 'otherPlayer');
+            player.sprite.displayHeight = GHOST_HEIGHT;
+            player.sprite.displayWidth = GHOST_WIDTH;
+
+            otherPlayer.sprite = this.add.sprite(
+                PLAYER_START_X,
+                PLAYER_START_Y,
+                'player'
+            );
+            otherPlayer.sprite.displayHeight = PLAYER_HEIGHT;
+            otherPlayer.sprite.displayWidth = PLAYER_WIDTH;
+
+            // Create animation for the ghost
+            this.anims.create({
+                key: 'running',
+                frames: this.anims.generateFrameNumbers('otherPlayer'),
+                frameRate: 24,
+                repeat: -1,
+            });
+        }
+
+        // Input handling
         this.input.keyboard.on('keydown', (e) => {
             if (!pressedKeys.includes(e.code)) {
                 pressedKeys.push(e.code);
@@ -114,6 +152,7 @@ class MyGame extends Phaser.Scene {
         });
     }
 
+
     update() {
         // Ensure player.sprite is defined before accessing its properties
         if (player.sprite) {
@@ -132,19 +171,23 @@ class MyGame extends Phaser.Scene {
                 player.movedLastFrame = false;
             }
 
-            animateMovement(pressedKeys, player.sprite);
+            // Call animateMovement only if player.sprite and anims are initialized
+            if (player.sprite.anims) {
+                animateMovement(pressedKeys, player.sprite);
+            }
         }
 
         // Ensure otherPlayer.sprite is defined before accessing its properties
         if (otherPlayer.sprite) {
             // Animate other player
-            if (otherPlayer.moving && !otherPlayer.sprite.anims.isPlaying) {
+            if (otherPlayer.moving && otherPlayer.sprite.anims && !otherPlayer.sprite.anims.isPlaying) {
                 otherPlayer.sprite.play('running');
-            } else if (!otherPlayer.moving && otherPlayer.sprite.anims.isPlaying) {
+            } else if (!otherPlayer.moving && otherPlayer.sprite.anims && otherPlayer.sprite.anims.isPlaying) {
                 otherPlayer.sprite.stop('running');
             }
         }
     }
+
 
 }
 
