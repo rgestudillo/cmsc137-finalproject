@@ -113,7 +113,7 @@ const LobbyPage = () => {
 
             <div>
                 <button
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/server-connected")}
                     style={{
                         fontSize: "20px",
                         color: "#fff",

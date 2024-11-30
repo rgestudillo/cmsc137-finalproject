@@ -225,12 +225,8 @@ class MyGame extends Phaser.Scene {
             // Center camera on player
             this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
-
-            // Update fog of war mask
-            this.updateFogOfWar(player.sprite.x, player.sprite.y);
-
             // Handle player movement
-            const playerMoved = movePlayer(pressedKeys, player.sprite);
+            const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);
 
             if (playerMoved) {
                 if (!player.movedLastFrame) player.footsteps.play();
@@ -282,13 +278,6 @@ class MyGame extends Phaser.Scene {
             if (distance <= 20) {
                 this.socket.emit('gameOver', { gameId: this.gameId });
             }
-        }
-    }
-
-    updateFogOfWar(playerX, playerY) {
-        if (this.fogMaskGraphics) {
-            this.fogMaskGraphics.clear();
-            this.fogMaskGraphics.fillCircle(playerX, playerY, 100); // 100 radius visibility
         }
     }
 }
