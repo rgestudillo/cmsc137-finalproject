@@ -46,7 +46,7 @@ function HomePage() {
     return (
         <div
             style={{
-                fontFamily: "Arial, sans-serif",
+                fontFamily: "Press Start 2P", // Apply the custom font here
                 textAlign: "center",
                 padding: "20px",
             }}
@@ -57,6 +57,7 @@ function HomePage() {
             <button
                 onClick={handleConnectToServer}
                 style={{
+                    fontFamily: "Press Start 2P", // Apply the custom font here
                     padding: "10px 20px",
                     fontSize: "16px",
                     cursor: "pointer",
