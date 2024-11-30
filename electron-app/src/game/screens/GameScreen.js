@@ -68,9 +68,35 @@ class MyGame extends Phaser.Scene {
         player.footsteps = this.sound.add('footsteps', { loop: true, volume: 0.5 });
         otherPlayer.footsteps = this.sound.add('footsteps', { loop: true, volume: 0.5, pan: 0 });
 
+        // Mask the screen black
+        this.createScreenMask();
+
         // Clean up resources when scene shuts down
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanupScene());
     }
+
+    createScreenMask() {
+        // Create a graphics object for the mask
+        this.blackMaskGraphics = this.make.graphics({
+            fillStyle: { color: 0x000000 }, // Black fill
+        }, false);
+
+        // Fill the mask graphics with a black circle
+        const centerX = this.cameras.main.width / 2;  // Center of the screen
+        const centerY = this.cameras.main.height / 2; // Center of the screen
+        const radius = 100; // Radius of the circle
+
+        this.blackMaskGraphics.fillCircle(centerX, centerY, radius);
+
+        // Create the mask from the graphics object
+        this.blackMask = this.blackMaskGraphics.createGeometryMask();
+
+        // Apply the mask to the camera
+        this.cameras.main.setMask(this.blackMask);
+
+        console.log("Screen masked with a circle");
+    }
+
 
     cleanupSocketListeners() {
         this.socket.off('lobbyFull');
@@ -199,6 +225,10 @@ class MyGame extends Phaser.Scene {
             // Center camera on player
             this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
+
+            // Update fog of war mask
+            this.updateFogOfWar(player.sprite.x, player.sprite.y);
+
             // Handle player movement
             const playerMoved = movePlayer(pressedKeys, player.sprite);
 
@@ -252,6 +282,13 @@ class MyGame extends Phaser.Scene {
             if (distance <= 20) {
                 this.socket.emit('gameOver', { gameId: this.gameId });
             }
+        }
+    }
+
+    updateFogOfWar(playerX, playerY) {
+        if (this.fogMaskGraphics) {
+            this.fogMaskGraphics.clear();
+            this.fogMaskGraphics.fillCircle(playerX, playerY, 100); // 100 radius visibility
         }
     }
 }
