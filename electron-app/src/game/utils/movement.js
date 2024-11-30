@@ -5,9 +5,15 @@ const isWithinMovementBoundaries = (x, y) => {
     return !mapBounds[y] ? true : !mapBounds[y].includes(x);
 };
 
-export const movePlayer = (keys, player, role) => {
+export const movePlayer = (keys, player, role, isShiftPressed) => {
     let playerMoved = false;
-    const speed = role === 'ghost' ? GHOST_SPEED : PLAYER_SPEED; // Determine speed based on role
+
+    // Determine speed based on role and whether Shift is pressed
+    let speed = role === 'ghost' ? GHOST_SPEED : PLAYER_SPEED;
+    if (role === 'player' && isShiftPressed) {
+        speed = speed / 2;  // Halve the speed if Shift is pressed
+    }
+
     const absPlayerX = player.x + SHIP_WIDTH / 2;
     const absPlayerY = player.y + SHIP_HEIGHT / 2 + 20;
 
