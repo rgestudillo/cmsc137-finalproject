@@ -193,8 +193,15 @@ class MyGame extends Phaser.Scene {
 
     handleMoveEvent(x, y) {
         if (otherPlayer.sprite) {
-            otherPlayer.sprite.flipX = otherPlayer.sprite.x > x;
-            otherPlayer.sprite.setPosition(x, y);
+            
+            if (otherPlayer.sprite.x > x) {
+                otherPlayer.sprite.flipX = true;
+            } else if (otherPlayer.sprite.x < x) {
+                otherPlayer.sprite.flipX = false;
+            }
+            
+            otherPlayer.sprite.x = x;
+            otherPlayer.sprite.y = y;
             otherPlayer.moving = true;
 
             if (!otherPlayer.footsteps.isPlaying) {
