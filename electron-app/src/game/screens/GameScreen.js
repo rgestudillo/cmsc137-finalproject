@@ -19,7 +19,7 @@ import { animateMovement } from '../utils/animation';
 let player = {};
 let otherPlayer = {};
 let pressedKeys = [];
-
+const maxHearingRange = 300;
 class MyGame extends Phaser.Scene {
     constructor({ socket, role }) {
         super("MyGame");
@@ -225,8 +225,12 @@ class MyGame extends Phaser.Scene {
             // Center camera on player
             this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
+
+            // Update fog of war mask
+            this.updateFogOfWar(player.sprite.x, player.sprite.y);
+
             // Handle player movement
-            const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);
+            const playerMoved = movePlayer(pressedKeys, player.sprite);
 
             if (playerMoved) {
                 if (!player.movedLastFrame) player.footsteps.play();
@@ -244,7 +248,7 @@ class MyGame extends Phaser.Scene {
                 }
             }
 
-            this.updateHearingRange();
+            this.updatePlayerAudioAndVisualization();
         }
 
         if (otherPlayer.sprite) {
@@ -262,11 +266,45 @@ class MyGame extends Phaser.Scene {
         }
     }
 
+    // Visualize the player's hearing range
     updateHearingRange() {
         if (this.hearingRange && player.sprite) {
             this.hearingRange.clear();
-            this.hearingRange.strokeCircle(player.sprite.x, player.sprite.y, 300);
+            this.hearingRange.lineStyle(2, 0x00ff00, 0.5); // Green circle with 50% opacity
+            this.hearingRange.strokeCircle(player.sprite.x, player.sprite.y, maxHearingRange);
         }
+    }
+
+    // Update audio and visualization
+    updatePlayerAudioAndVisualization() {
+
+        if (player.sprite && otherPlayer.sprite) {
+            const playerPosition = { x: player.sprite.x, y: player.sprite.y };
+            const otherPlayerPosition = { x: otherPlayer.sprite.x, y: otherPlayer.sprite.y };
+
+            // Calculate distance between player and other player
+            const dx = otherPlayerPosition.x - playerPosition.x;
+            const dy = otherPlayerPosition.y - playerPosition.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            // Calculate volume and pan based on distance and position
+            const volume = Phaser.Math.Clamp(1 - distance / maxHearingRange, 0, 1);
+            const pan = Phaser.Math.Clamp(dx / maxHearingRange, -1, 1);
+
+            // Update the footsteps audio properties
+            otherPlayer.footsteps.setVolume(volume);
+            otherPlayer.footsteps.setPan(pan);
+
+            // Play or stop footsteps based on movement
+            if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {
+                otherPlayer.footsteps.play();
+            } else if (!otherPlayer.moving && otherPlayer.footsteps.isPlaying) {
+                otherPlayer.footsteps.stop();
+            }
+        }
+
+        // Call updateHearingRange to update the visual
+        this.updateHearingRange();
     }
 
     handleGhostAttack() {
@@ -278,6 +316,13 @@ class MyGame extends Phaser.Scene {
             if (distance <= 20) {
                 this.socket.emit('gameOver', { gameId: this.gameId });
             }
+        }
+    }
+
+    updateFogOfWar(playerX, playerY) {
+        if (this.fogMaskGraphics) {
+            this.fogMaskGraphics.clear();
+            this.fogMaskGraphics.fillCircle(playerX, playerY, 100); // 100 radius visibility
         }
     }
 }
