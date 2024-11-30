@@ -5,19 +5,16 @@ import { EventBus } from "./EventBus";
 import { useSocket } from "../context/SocketContext";
 
 export const PhaserGame = forwardRef(function PhaserGame(
-    { currentActiveScene },
+    { currentActiveScene, role }, // Accept role as a prop
     ref
 ) {
     const game = useRef();
     const { socket } = useSocket();
 
-    console.log("phaser socket is: ", socket);
-
-    // Create the game inside a useLayoutEffect hook to avoid the game being created outside the DOM
     useLayoutEffect(() => {
         if (game.current === undefined && socket) {
-            // Ensure socket is available
-            game.current = StartGame("game-container", socket); // Pass socket to StartGame function
+            // Pass socket and role to StartGame
+            game.current = StartGame("game-container", socket, role);
 
             if (ref !== null) {
                 ref.current = { game: game.current, scene: null };
@@ -30,7 +27,7 @@ export const PhaserGame = forwardRef(function PhaserGame(
                 game.current = undefined;
             }
         };
-    }, [ref, socket]); // Added socket dependency here
+    }, [ref, socket, role]); // Added role dependency here
 
     useEffect(() => {
         EventBus.on("current-scene-ready", (currentScene) => {
@@ -48,7 +45,7 @@ export const PhaserGame = forwardRef(function PhaserGame(
     return <div id="game-container"></div>;
 });
 
-// Props definitions
 PhaserGame.propTypes = {
     currentActiveScene: PropTypes.func,
+    role: PropTypes.string.isRequired, // Add role prop validation
 };
