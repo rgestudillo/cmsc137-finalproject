@@ -199,7 +199,7 @@ class MyGame extends Phaser.Scene {
             } else if (otherPlayer.sprite.x < x) {
                 otherPlayer.sprite.flipX = false;
             }
-
+            
             otherPlayer.sprite.x = x;
             otherPlayer.sprite.y = y;
             otherPlayer.moving = true;
@@ -229,9 +229,6 @@ class MyGame extends Phaser.Scene {
         if (player.sprite) {
             const playerAnimationKey = this.role === 'player' ? 'player-running' : 'ghost-running';
 
-            // Check if the Shift key is being pressed
-            const isShiftPressed = this.input.keyboard.checkDown(this.input.keyboard.addKey('SHIFT'));
-
             // Center camera on player
             this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
@@ -240,20 +237,13 @@ class MyGame extends Phaser.Scene {
             this.updateFogOfWar(player.sprite.x, player.sprite.y);
 
             // Handle player movement
-            const playerMoved = movePlayer(pressedKeys, player.sprite, this.role, isShiftPressed);
+            const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);;
 
             if (playerMoved) {
                 if (!player.movedLastFrame) player.footsteps.play();
                 this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y });
                 player.movedLastFrame = true;
                 animateMovement(pressedKeys, player.sprite, playerAnimationKey);
-
-                // If Shift is pressed and player is walking, mute the footsteps audio
-                if (isShiftPressed) {
-                    player.footsteps.setVolume(0); // Mute footsteps audio
-                } else {
-                    player.footsteps.setVolume(0.5); // Default volume when not muted
-                }
             } else {
                 if (player.movedLastFrame) player.footsteps.stop();
                 this.socket.emit('moveEnd', { gameId: this.gameId });
@@ -274,20 +264,6 @@ class MyGame extends Phaser.Scene {
                 otherPlayer.sprite.play(otherPlayerAnimationKey);
             } else if (!otherPlayer.moving && otherPlayer.sprite.anims?.isPlaying) {
                 otherPlayer.sprite.stop(otherPlayerAnimationKey);
-            }
-    
-            // If the role is 'ghost', mute the other player's footsteps when they walk
-            if (this.role === 'ghost') {
-                if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {
-                    otherPlayer.footsteps.play();
-                } else if (!otherPlayer.moving && otherPlayer.footsteps.isPlaying) {
-                    otherPlayer.footsteps.stop();
-                }
-    
-                // Mute other player's audio when they are walking
-                if (otherPlayer.moving && isShiftPressed) {
-                    otherPlayer.footsteps.setVolume(0); // Mute audio if walking with shift pressed
-                } 
             }
         }
 
