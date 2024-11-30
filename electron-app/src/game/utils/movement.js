@@ -6,39 +6,46 @@ const isWithinMovementBoundaries = (x, y) => {
 };
 
 export const movePlayer = (keys, player, role) => {
+
+    player.isWalking = false;
+    if(keys.includes('ShiftLeft')){
+        player.isWalking = true;
+    } 
     let playerMoved = false;
     const speed = role === 'ghost' ? GHOST_SPEED : PLAYER_SPEED; // Determine speed based on role
+    const finalSpeed = player.isWalking ? speed / 2 : speed; // Halve the speed if walking
+
     const absPlayerX = player.x + SHIP_WIDTH / 2;
     const absPlayerY = player.y + SHIP_HEIGHT / 2 + 20;
 
     if (
-        keys.includes('ArrowUp') &&
-        isWithinMovementBoundaries(absPlayerX, absPlayerY - speed)
+        keys.includes('KeyW') &&
+        isWithinMovementBoundaries(absPlayerX, absPlayerY - finalSpeed)
     ) {
         playerMoved = true;
-        player.y -= speed;
+        player.y -= finalSpeed;
     }
     if (
-        keys.includes('ArrowDown') &&
-        isWithinMovementBoundaries(absPlayerX, absPlayerY + speed)
+        keys.includes('KeyS') &&
+        isWithinMovementBoundaries(absPlayerX, absPlayerY + finalSpeed)
     ) {
         playerMoved = true;
-        player.y += speed;
+        player.y += finalSpeed;
     }
     if (
-        keys.includes('ArrowLeft') &&
-        isWithinMovementBoundaries(absPlayerX - speed, absPlayerY)
+        keys.includes('KeyA') &&
+        isWithinMovementBoundaries(absPlayerX - finalSpeed, absPlayerY)
     ) {
         playerMoved = true;
-        player.x -= speed;
+        player.x -= finalSpeed;
         player.flipX = true;
     }
     if (
-        keys.includes('ArrowRight') &&
-        isWithinMovementBoundaries(absPlayerX + speed, absPlayerY)
+        keys.includes('KeyD') &&
+        isWithinMovementBoundaries(absPlayerX + finalSpeed, absPlayerY)
     ) {
         playerMoved = true;
-        player.x += speed;
+        player.x += finalSpeed;
         player.flipX = false;
     }
 

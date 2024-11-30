@@ -102,9 +102,9 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('move', ({ gameId, x, y }) => {
-        //console.log(`Server received move event in game ${gameId}:`, x, y);
-        socket.to(`${gameId}`).emit('move', { x, y });
+    socket.on('move', ({ gameId, x, y, isWalking }) => {
+        console.log(`Server received move event in game ${gameId}:`, x, y, isWalking);
+        socket.to(`${gameId}`).emit('move', { x, y, isWalking });
     });
 
     socket.on('moveEnd', ({ gameId }) => {
