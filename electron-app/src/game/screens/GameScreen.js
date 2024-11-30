@@ -133,7 +133,13 @@ class MyGame extends Phaser.Scene {
 
         this.socket.on('move', ({ x, y }) => {
             console.log('Received move');
-            otherPlayer.sprite.setPosition(x, y);
+            if (otherPlayer.sprite.x > x) {
+                otherPlayer.sprite.flipX = true;
+            } else if (otherPlayer.sprite.x < x) {
+                otherPlayer.sprite.flipX = false;
+            }
+            otherPlayer.sprite.x = x;
+            otherPlayer.sprite.y = y;
             otherPlayer.moving = true;
 
             if (!otherPlayer.footsteps.isPlaying) {
@@ -189,11 +195,11 @@ class MyGame extends Phaser.Scene {
             const otherPlayerAnimationKey = this.role === 'player' ? 'ghost-running' : 'player-running';
 
             if (otherPlayer.moving) {
-                if (!otherPlayer.sprite.anims.isPlaying) {
+                if (otherPlayer.sprite.anims && !otherPlayer.sprite.anims.isPlaying) {
                     otherPlayer.sprite.play(otherPlayerAnimationKey);
                 }
             } else {
-                if (otherPlayer.sprite.anims.isPlaying) {
+                if (otherPlayer.sprite.anims && otherPlayer.sprite.anims.isPlaying) {
                     otherPlayer.sprite.stop(otherPlayerAnimationKey);
                 }
             }
