@@ -1,0 +1,135 @@
+/* Homepage container styles */
+.homepage-container {
+    text-align: center;
+    padding: 20px;
+    background-image: url('../../public/assets/sample-background.jpg');
+    background-size: cover;
+    background-position: center 40%;
+    background-repeat: no-repeat;
+    height: 400px;
+    width: 100%;
+}
+
+/* Header image container */
+.header-image-container {
+    display: flex;
+    justify-content: center;
+}
+
+.header-image {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Button section */
+.button-section {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+.button-background {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+}
+
+.button-background-image {
+    width: 100%;
+}
+
+.button-sample {
+    position: absolute;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: transparent;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+}
+
+.button-sample:hover {
+    background-color: #45a049;
+}
+
+.host-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #008cba;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal-connect-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-connect-button:hover {
+    background-color: #45a049;
+}
+
+.modal-cancel-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
