@@ -59,7 +59,7 @@ function HomePage() {
                     marginTop: "100px",
                     marginLeft: "100px"
                 }}>
-                    <img src="/assets/Front-Page.png" alt="" style={{ width: "130%", height: "100%" }} />
+                    <img src="/assets/home-screen.gif" alt="" style={{ width: "130%", height: "100%" }} />
                 </div>
 
                 {/* EchoChambers section - 60% width */}
