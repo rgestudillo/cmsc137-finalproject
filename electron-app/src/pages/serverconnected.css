@@ -14,22 +14,18 @@
     font-display: swap;
 }
 
-body,
-html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    /* Ensure the body takes the full height of the page */
-    width: 100%;
-    /* Ensure the width covers the full page */
-}
-
-
-.test {
-    height: 100%;
-    /* Full page height */
+.homepage-container {
+    text-align: center;
+    padding: 20px;
+    background-image: url('../../public/assets/sample-background.jpg');
+    background-size: cover;
+    background-position: center 40%;
+    background-repeat: no-repeat;
+    height: 400px;
     width: 100%;
 }
+
+.test {}
 
 /* Header image container */
 .header-image-container {
@@ -54,7 +50,6 @@ html {
 }
 
 .button-background {
-    background-image: url("/assets/home-screen-button.png");
     /* Default background image */
     background-size: cover;
     /* Ensure the image covers the entire area */
@@ -73,9 +68,23 @@ html {
     /* Smooth transition for image change */
 }
 
+/* Button 1 background image */
+.button-background.create-server {
+    background-image: url("/assets/create-server.png");
+}
+
+.button-background.create-server:hover {
+    background-image: url("/assets/create-server-host.png");
+}
+
+/* Button 2 background image */
+.button-background.connect-server {
+    background-image: url("/assets/join-server.png");
+}
+
 /* Hover effect to change the background image */
-.button-background:hover {
-    background-image: url('/assets/home-screen-button-hover.png');
+.button-background.connect-server:hover {
+    background-image: url('/assets/join-server-hover.png');
     /* Image on hover */
 }
 
@@ -108,32 +117,6 @@ html {
     z-index: 10;
 }
 
-.front-page-image {
-    position: absolute;
-    /* Make it absolutely positioned */
-    top: 0;
-    /* Position from the top of the parent container */
-    left: 0;
-    /* Position from the left of the parent container */
-    background-image: url('/assets/Front-Page.png');
-    /* Replace with your image URL */
-    background-size: cover;
-    /* Ensures the background image covers the entire div */
-    background-position: center;
-    /* Centers the background image */
-    width: 70%;
-    /* Front page image takes up 70% of the parent container */
-    height: 100%;
-    /* Full height of the parent container */
-}
-
-@media (max-width: 600px) {
-    .front-page-image {
-        display: none;
-        /* Full height of the parent container */
-    }
-}
-
 @media (max-width: 600px) {
     .button-sample {
         font-size: 8px;
@@ -144,11 +127,22 @@ html {
 }
 
 /* Modal styles */
-.modal {}
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
 
 .modal-content {
 
-    background-color: #2f1105;
+    background-color: var(--primary-color);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -162,10 +156,8 @@ html {
     font-family: 'Arial';
     background-color: var(--secondary-color);
     width: 100%;
-    padding: 10px;
+    padding: 15px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
     box-sizing: border-box;
 }
 
@@ -184,8 +176,8 @@ html {
 }
 
 .modal-connect-button {
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 10px 20px;
+    font-family: 'Arial';
+    padding: 15px 40px;
     font-size: 16px;
     cursor: pointer;
     background-color: #4caf50;
@@ -196,20 +188,16 @@ html {
 }
 
 .modal-connect-button:hover {
-    background-color: #06402B;
+    background-color: #45a049;
 }
 
 .modal-cancel-button {
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 10px 20px;
+    font-family: 'Arial';
+    padding: 15px 40px;
     font-size: 16px;
     cursor: pointer;
     background-color: #f44336;
     color: white;
     border: none;
     border-radius: 10px;
-}
-
-.modal-cancel-button:hover {
-    background-color: #8B0000;
 }

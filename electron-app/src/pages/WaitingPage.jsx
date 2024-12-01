@@ -59,7 +59,10 @@ const WaitingPage = () => {
             style={{
                 textAlign: "center",
                 color: "#ffffff",
-                backgroundColor: "#282828",
+                backgroundImage: "url('/assets/host-create.png')", // Replace with your image URL
+                backgroundSize: "cover", // Makes sure the image covers the entire div
+                backgroundPosition: "center", // Centers the image
+                width: "100vw", // Changed from 100vh to 100vw for full width
                 height: "100vh",
                 display: "flex",
                 flexDirection: "column",
@@ -67,19 +70,20 @@ const WaitingPage = () => {
                 justifyContent: "center",
             }}
         >
-            <h1 style={{ fontSize: "48px", marginBottom: "20px" }}>
-                Waiting for Opponent
-            </h1>
-
-            <p style={{ fontSize: "24px", color: "#fff" }}>{waitingText}</p>
-
-            {/* Display Lobby ID */}
-            <p style={{ fontSize: "20px", color: "#fff" }}>
-                Lobby ID: {lobbyId}
-            </p>
-
+            <div>
+                <img src="/assets/WaitingforOpp.gif" alt="Waiting animation" style={{ width: "100%", height: "180%" }} />
+            </div>
+            <div style={{ marginLeft: "20px", marginRight: "20px", fontSize: "24px", color: "#fff" }}>
+                <p style={{ marginTop: "100px", fontSize: "24px", color: "#fff" }}>...</p>
+            </div>
+            <div style={{ backgroundColor: "#938289", width: "100%" }}>
+                {/* Display Lobby ID */}
+                <p style={{ fontSize: "20px", color: "#4caf50" }}>
+                    Lobby ID: {lobbyId}
+                </p>
+            </div>
             {/* Play Button */}
-            {showPlayButton && !playButtonClicked && (
+            {showPlayButton && !playButtonClicked ? (
                 <button
                     style={{
                         fontSize: "32px",
@@ -93,6 +97,10 @@ const WaitingPage = () => {
                 >
                     Play
                 </button>
+            ) : (
+                <div>
+                    <img src="/assets/HostileAttackReaper.gif" alt="Your Gif" style={{ width: "100%", height: "200%" }} />
+                </div>
             )}
         </div>
     );
