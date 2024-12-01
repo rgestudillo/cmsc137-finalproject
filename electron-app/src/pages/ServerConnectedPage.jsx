@@ -2,6 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketContext";
+import "../pages/serverconnected.css";
 
 const ServerConnectedPage = () => {
     const { socket, serverUrl } = useSocket();
@@ -27,9 +28,13 @@ const ServerConnectedPage = () => {
     return (
         <div
             style={{
+                fontFamily: "'Press Start 2P', cursive",
                 textAlign: "center",
                 color: "#ffffff",
-                backgroundColor: "#282828",
+                backgroundImage: "url('/assets/host-create.png')", // Replace with your image URL
+                backgroundSize: "cover", // Makes sure the image covers the entire div
+                backgroundPosition: "center", // Centers the image
+                width: "100vw", // Changed from 100vh to 100vw for full width
                 height: "100vh",
                 display: "flex",
                 flexDirection: "column",
@@ -37,48 +42,27 @@ const ServerConnectedPage = () => {
                 justifyContent: "center",
             }}
         >
-            <h1 style={{ fontSize: "48px", marginBottom: "20px" }}>
-                Welcome to the Game
-            </h1>
-            {/* Display the Server URL */}
-            {serverUrl && (
-                <p
-                    style={{
-                        fontSize: "20px",
-                        color: "#aaa",
-                        marginBottom: "20px",
-                    }}
-                >
-                    Connected to: {serverUrl}
-                </p>
-            )}
-            <button
-                style={{
-                    fontSize: "32px",
-                    color: "#0f0",
-                    backgroundColor: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    marginBottom: "20px",
-                }}
-                onClick={handleCreateLobby}
-            >
-                Create Lobby
-            </button>
-
-            <button
-                style={{
-                    fontSize: "32px",
-                    color: "#f00",
-                    backgroundColor: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                }}
-                onClick={handleJoinLobby}
-            >
-                Join Lobby
-            </button>
+            <div>
+                <img
+                    src="/assets/eyesanimation.gif"
+                    alt="Eyes Animation"
+                    style={{ width: "40%", height: "auto", marginBottom: "10px" }} // Reduced margin
+                />
+            </div>
+            <div className="button-section">
+                <div className="button-background create-server" onClick={handleCreateLobby}>
+                    <button className="button-sample">
+                        Create Lobby
+                    </button>
+                </div>
+                <div className="button-background connect-server" onClick={handleJoinLobby}>
+                    <button className="button-sample">
+                        Join Lobby
+                    </button>
+                </div>
+            </div>
         </div>
+
     );
 };
 

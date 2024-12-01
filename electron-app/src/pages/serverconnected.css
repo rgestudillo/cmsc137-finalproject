@@ -1,0 +1,203 @@
+/* Homepage container styles */
+:root {
+    --primary-color: #2f1105;
+    /* Primary color */
+    --secondary-color: #7a5742;
+    /* Secondary color */
+}
+
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('/assets/fonts/PressStart2P-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+.homepage-container {
+    text-align: center;
+    padding: 20px;
+    background-image: url('../../public/assets/sample-background.jpg');
+    background-size: cover;
+    background-position: center 40%;
+    background-repeat: no-repeat;
+    height: 400px;
+    width: 100%;
+}
+
+.test {}
+
+/* Header image container */
+.header-image-container {
+    display: flex;
+    justify-content: center;
+}
+
+.header-image {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Button section */
+.button-section {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+.button-background {
+    /* Default background image */
+    background-size: cover;
+    /* Ensure the image covers the entire area */
+    background-position: center;
+    /* Keep the image centered */
+    background-repeat: no-repeat;
+    /* Prevent the background from repeating */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+    height: 50px;
+    /* Set a height for the button background, you can adjust as needed */
+    transition: background-image 0.3s ease;
+    /* Smooth transition for image change */
+}
+
+/* Button 1 background image */
+.button-background.create-server {
+    background-image: url("/assets/create-server.png");
+}
+
+.button-background.create-server:hover {
+    background-image: url("/assets/create-server-host.png");
+}
+
+/* Button 2 background image */
+.button-background.connect-server {
+    background-image: url("/assets/join-server.png");
+}
+
+/* Hover effect to change the background image */
+.button-background.connect-server:hover {
+    background-image: url('/assets/join-server-hover.png');
+    /* Image on hover */
+}
+
+.button-background-image {
+    width: 80%;
+    /* You can set a height for the image if needed */
+    height: auto;
+}
+
+
+@media(max-width: 600px) {
+    .button-background {
+        width: 50%;
+    }
+
+    .button-background-image {
+        width: 60%;
+    }
+}
+
+.button-sample {
+    position: absolute;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: transparent;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+}
+
+@media (max-width: 600px) {
+    .button-sample {
+        font-size: 8px;
+        /* Adjust the font size for small screens */
+        padding: 8px 15px;
+        /* Adjust padding for smaller screens */
+    }
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+
+    background-color: var(--primary-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.modal-input {
+    color: #FFFFFF;
+    font-family: 'Arial';
+    background-color: var(--secondary-color);
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+
+.modal-input::placeholder {
+    color: #FFFFFF;
+    /* Change this to your desired color */
+    opacity: 1;
+    /* Optional: Ensures full opacity for the placeholder text */
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal-connect-button {
+    font-family: 'Arial';
+    padding: 15px 40px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-connect-button:hover {
+    background-color: #45a049;
+}
+
+.modal-cancel-button {
+    font-family: 'Arial';
+    padding: 15px 40px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
