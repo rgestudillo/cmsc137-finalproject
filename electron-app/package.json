@@ -30,10 +30,12 @@
         "build-electron": "npm run build && electron-builder"
     },
     "dependencies": {
+        "axios": "^1.7.8",
         "bonjour": "^3.5.0",
         "express": "^4.21.1",
         "get-port": "^7.1.0",
         "phaser": "^3.86.0",
+        "png-js": "^1.0.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-router-dom": "^6.28.0",

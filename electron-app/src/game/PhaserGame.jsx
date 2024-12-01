@@ -4,20 +4,34 @@ import StartGame from "./main";
 import { EventBus } from "./EventBus";
 import { useSocket } from "../context/SocketContext";
 
+// Global variable to track the Phaser.Game instance
+let currentGameInstance = null;
+
 export const PhaserGame = forwardRef(function PhaserGame(
-    { currentActiveScene },
+    { currentActiveScene, role, navigate }, // Accept navigate callback as a prop
     ref
 ) {
     const game = useRef();
     const { socket } = useSocket();
 
-    console.log("phaser socket is: ", socket);
-
-    // Create the game inside a useLayoutEffect hook to avoid the game being created outside the DOM
     useLayoutEffect(() => {
+        // Check and destroy any existing game instance before creating a new one
+        if (currentGameInstance) {
+            console.log("Destroying existing Phaser instance.");
+            currentGameInstance.destroy(true);
+            currentGameInstance = null;
+        }
+
+        // Create a new game instance if it doesn't exist
         if (game.current === undefined && socket) {
-            // Ensure socket is available
-            game.current = StartGame("game-container", socket); // Pass socket to StartGame function
+            console.log("Creating a new Phaser instance.");
+            currentGameInstance = StartGame(
+                "game-container",
+                socket,
+                role,
+                navigate
+            );
+            game.current = currentGameInstance;
 
             if (ref !== null) {
                 ref.current = { game: game.current, scene: null };
@@ -25,19 +39,24 @@ export const PhaserGame = forwardRef(function PhaserGame(
         }
 
         return () => {
+            // Cleanup the Phaser.Game instance when the component unmounts
             if (game.current) {
+                console.log("Cleaning up Phaser instance.");
                 game.current.destroy(true);
                 game.current = undefined;
+                currentGameInstance = null;
             }
         };
-    }, [ref, socket]); // Added socket dependency here
+    }, [ref, socket, role, navigate]);
 
     useEffect(() => {
         EventBus.on("current-scene-ready", (currentScene) => {
             if (currentActiveScene instanceof Function) {
                 currentActiveScene(currentScene);
             }
-            ref.current.scene = currentScene;
+            if (ref.current) {
+                ref.current.scene = currentScene;
+            }
         });
 
         return () => {
@@ -48,7 +67,8 @@ export const PhaserGame = forwardRef(function PhaserGame(
     return <div id="game-container"></div>;
 });
 
-// Props definitions
 PhaserGame.propTypes = {
     currentActiveScene: PropTypes.func,
+    role: PropTypes.string.isRequired, // Add role prop validation
+    navigate: PropTypes.func.isRequired, // Add navigate prop validation
 };

@@ -1,21 +1,22 @@
-import Phaser from 'phaser';
-import GameScreen from './screens/GameScreen';
+import Phaser from "phaser";
+import GameScreen from "./screens/GameScreen";
+import GameOverScreen from "./screens/GameOverScreen";
 
-// Find out more information about the Game Config at:
-// https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config = {
     type: Phaser.AUTO,
-    parent: 'game-container',
+    parent: "game-container",
     width: 800,
     height: 450,
-    scene: [GameScreen],
 };
 
-const StartGame = (parent, socket) => {
+const StartGame = (parent, socket, role, navigateCallback) => {
     return new Phaser.Game({
         ...config,
         parent,
-        scene: [new GameScreen(socket)], // Pass socket to GameScreen
+        scene: [
+            new GameScreen({ socket, role }), // Pass socket and role to GameScreen
+            new GameOverScreen(navigateCallback), // Pass navigateCallback to GameOverScreen
+        ],
     });
 };
 
