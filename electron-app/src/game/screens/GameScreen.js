@@ -72,8 +72,18 @@ class MyGame extends Phaser.Scene {
         // Mask the screen black
         this.createScreenMask();
 
+        this.cameras.main.setZoom(1.5); // Adjust this value for the desired zoom level
+
         // Clean up resources when scene shuts down
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanupScene());
+
+        this.input.keyboard.on('keydown-F', () => {
+            if (this.scale.isFullscreen) {
+                this.scale.stopFullscreen();
+            } else {
+                this.scale.startFullscreen();
+            }
+        });
     }
 
     createScreenMask() {
@@ -85,7 +95,7 @@ class MyGame extends Phaser.Scene {
         // Fill the mask graphics with a black circle
         const centerX = this.cameras.main.width / 2;  // Center of the screen
         const centerY = this.cameras.main.height / 2; // Center of the screen
-        const radius = 100; // Radius of the circle
+        const radius = 300; // Radius of the circle
 
         this.blackMaskGraphics.fillCircle(centerX, centerY, radius);
 
