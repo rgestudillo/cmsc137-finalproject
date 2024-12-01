@@ -43,58 +43,57 @@ function HomePage() {
 
     return (
         <div>
-            <div className="homepage-container" style={{
-                backgroundImage: "url('/assets/test.png')", // Replace with your image URL
-                width: "100vw",
-                height: "100vh",
-                display: "flex",
-                justifyContent: "center",
-            }}>
-                <div style={{
-                    width: "100%",
-                    height: "100%",
-                    marginRight: "160px"
-                }}>
-                    <div class="front-page-image"></div>
-                </div>
-                <div style={{
+            <div
+                className="homepage-container"
+                style={{
+                    backgroundImage: "url('/assets/test.png')", // Replace with your image URL
+                    width: "100vw",
+                    height: "100vh",
                     display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "100%", // Content section takes up 60% of the space
-                    height: "100%",
-                    gap: "5px",
-                    marginRight: "100px"
+                    flexDirection: "row",
+                }}
+            >
+                {/* Image section - 40% width */}
+                <div style={{
+                    width: "40%",
+                    marginTop: "100px",
+                    marginLeft: "100px"
                 }}>
-                    <div className="header-image-container" style={{}}>
+                    <img src="/assets/Front-Page.png" alt="" style={{ width: "130%", height: "100%" }} />
+                </div>
+
+                {/* EchoChambers section - 60% width */}
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "60%",
+                        height: "100%",
+                        gap: "50px",
+                        marginRight: "100px",
+                    }}
+                >
+                    <div className="header-image-container">
                         <img
                             src="/assets/EchoedChambers.gif"
                             alt="Echoed Chambers"
                             className="header-image"
-                            style={{ maxWidth: "100%", height: "100%" }}
+                            style={{ maxWidth: "100%", height: "150%" }}
                         />
                     </div>
                     <div className="button-section">
                         <div className="button-background" onClick={handleConnectToServer}>
-                            <button className="button-sample">
-                                Connect to Server
-                            </button>
+                            <button className="button-sample">Connect to Server</button>
                         </div>
                         <div className="button-background" onClick={handleCreateServer}>
-                            <button className="button-sample">
-                                Host a Server
-                            </button>
+                            <button className="button-sample">Host a Server</button>
                         </div>
                         <div className="button-background">
-                            <button className="button-sample">
-                                Exit
-                            </button>
+                            <button className="button-sample">Exit</button>
                         </div>
-                        <h3 style={{
-                            fontFamily: "Arial",
-                            fontSize: "12px"
-                        }}>
+                        <h3 style={{ fontFamily: "Arial", fontSize: "12px" }}>
                             © 2024 Echoed Chambers. All rights reserved.
                         </h3>
                     </div>
@@ -110,16 +109,10 @@ function HomePage() {
                                     className="modal-input"
                                 />
                                 <div className="modal-buttons">
-                                    <button
-                                        onClick={handleModalSubmit}
-                                        className="modal-connect-button"
-                                    >
+                                    <button onClick={handleModalSubmit} className="modal-connect-button">
                                         Connect
                                     </button>
-                                    <button
-                                        onClick={() => setShowModal(false)}
-                                        className="modal-cancel-button"
-                                    >
+                                    <button onClick={() => setShowModal(false)} className="modal-cancel-button">
                                         Cancel
                                     </button>
                                 </div>
@@ -128,11 +121,7 @@ function HomePage() {
                     )}
                 </div>
             </div>
-            {/* CSS for hiding the image on mobile */}
         </div>
-
-
-
     );
 }
 

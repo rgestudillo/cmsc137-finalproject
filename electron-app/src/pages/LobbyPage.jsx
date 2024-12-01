@@ -121,7 +121,6 @@ const LobbyPage = () => {
                     style={{
                         fontSize: "20px",
                         color: "#fff",
-                        backgroundColor: "#ff5722",
                         border: "none",
                         padding: "10px 20px",
                         cursor: "pointer",

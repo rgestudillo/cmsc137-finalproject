@@ -108,31 +108,6 @@ html {
     z-index: 10;
 }
 
-.front-page-image {
-    position: absolute;
-    /* Make it absolutely positioned */
-    top: 0;
-    /* Position from the top of the parent container */
-    left: 0;
-    /* Position from the left of the parent container */
-    background-image: url('/assets/Front-Page.png');
-    /* Replace with your image URL */
-    background-size: cover;
-    /* Ensures the background image covers the entire div */
-    background-position: center;
-    /* Centers the background image */
-    width: 70%;
-    /* Front page image takes up 70% of the parent container */
-    height: 100%;
-    /* Full height of the parent container */
-}
-
-@media (max-width: 600px) {
-    .front-page-image {
-        display: none;
-        /* Full height of the parent container */
-    }
-}
 
 @media (max-width: 600px) {
     .button-sample {
