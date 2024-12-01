@@ -66,9 +66,23 @@ const LobbyPage = () => {
             }}
         >
             <div>
-                <img src="/assets/lobbypage.gif" alt="Eyes Animation" style={{ width: "100%", height: "170%", marginBottom: "10px" }} />
+                <img
+                    src="/assets/lobbypage.gif"
+                    alt="Eyes Animation"
+                    style={{
+                        width: "100%",
+                        height: "170%",
+                        marginBottom: "10px",
+                    }}
+                />
             </div>
-            <p style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "20px", marginBottom: "10px" }}>
+            <p
+                style={{
+                    fontFamily: "Arial, Helvetica, sans-serif",
+                    fontSize: "20px",
+                    marginBottom: "10px",
+                }}
+            >
                 All players are waiting to start the game.
             </p>
             {errorMessage && (
@@ -83,7 +97,13 @@ const LobbyPage = () => {
                 </p>
             )}
 
-            <h2 style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "24px", marginBottom: "20px" }}>
+            <h2
+                style={{
+                    fontFamily: "Arial, Helvetica, sans-serif",
+                    fontSize: "24px",
+                    marginBottom: "20px",
+                }}
+            >
                 Available Lobbies
             </h2>
 
@@ -109,12 +129,17 @@ const LobbyPage = () => {
                         </div>
                     ))
                 ) : (
-                    <p style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "18px" }}>
+                    <p
+                        style={{
+                            fontFamily: "Arial, Helvetica, sans-serif",
+                            fontSize: "18px",
+                        }}
+                    >
                         No lobbies available at the moment.
                     </p>
                 )}
             </div>
-            <div className="button-background connect-server" onClick={() => navigate("/")}>
+            <div className="button-background connect-server">
                 <button
                     className="button-sample"
                     onClick={() => navigate("/server-connected")}
@@ -130,7 +155,6 @@ const LobbyPage = () => {
                     Back to Main
                 </button>
             </div>
-
         </div>
     );
 };
