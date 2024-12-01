@@ -184,7 +184,7 @@ class MyGame extends Phaser.Scene {
             this.anims.create({
                 key,
                 frames: this.anims.generateFrameNumbers(textureKey),
-                frameRate: 24,
+                frameRate: 12,
                 repeat: -1,
             });
         }
@@ -210,13 +210,13 @@ class MyGame extends Phaser.Scene {
             // }else{
             //     otherPlayer.sprite.isWalking = false;
             // }
-            
+
             if (otherPlayer.sprite.x > x) {
                 otherPlayer.sprite.flipX = true;
             } else if (otherPlayer.sprite.x < x) {
                 otherPlayer.sprite.flipX = false;
             }
-            
+
             otherPlayer.sprite.x = x;
             otherPlayer.sprite.y = y;
             otherPlayer.moving = true;
@@ -233,7 +233,7 @@ class MyGame extends Phaser.Scene {
         }
     }
 
-    handleMoveEnd() {   
+    handleMoveEnd() {
         if (otherPlayer.sprite) {
             otherPlayer.moving = false;
 
@@ -329,7 +329,7 @@ class MyGame extends Phaser.Scene {
             // Update the footsteps audio properties
             otherPlayer.footsteps.setVolume(volume);
             otherPlayer.footsteps.setPan(pan);
-    
+
             // Play or stop footsteps based on movement
             // if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {   
             //     otherPlayer.footsteps.play();

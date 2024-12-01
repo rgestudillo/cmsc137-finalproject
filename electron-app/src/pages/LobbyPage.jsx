@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketContext";
+import "../pages/serverconnected.css";
 
 const LobbyPage = () => {
     const navigate = useNavigate();
@@ -48,13 +49,15 @@ const LobbyPage = () => {
             navigate("/waiting", { state: { isHost: false, lobbyId } });
         });
     };
-
     return (
         <div
             style={{
                 textAlign: "center",
-                color: "#fff",
-                backgroundColor: "#333",
+                color: "#ffffff",
+                backgroundImage: "url('/assets/connect-join.png')", // Replace with your image URL
+                backgroundSize: "cover", // Makes sure the image covers the entire div
+                backgroundPosition: "center", // Centers the image
+                width: "100vw", // Changed from 100vh to 100vw for full width
                 height: "100vh",
                 display: "flex",
                 flexDirection: "column",
@@ -62,10 +65,24 @@ const LobbyPage = () => {
                 justifyContent: "center",
             }}
         >
-            <h1 style={{ fontSize: "36px", marginBottom: "20px" }}>
-                Lobby Page
-            </h1>
-            <p style={{ fontSize: "20px", marginBottom: "20px" }}>
+            <div>
+                <img
+                    src="/assets/lobbypage.gif"
+                    alt="Eyes Animation"
+                    style={{
+                        width: "100%",
+                        height: "170%",
+                        marginBottom: "10px",
+                    }}
+                />
+            </div>
+            <p
+                style={{
+                    fontFamily: "Arial, Helvetica, sans-serif",
+                    fontSize: "20px",
+                    marginBottom: "10px",
+                }}
+            >
                 All players are waiting to start the game.
             </p>
             {errorMessage && (
@@ -80,7 +97,13 @@ const LobbyPage = () => {
                 </p>
             )}
 
-            <h2 style={{ fontSize: "24px", marginBottom: "20px" }}>
+            <h2
+                style={{
+                    fontFamily: "Arial, Helvetica, sans-serif",
+                    fontSize: "24px",
+                    marginBottom: "20px",
+                }}
+            >
                 Available Lobbies
             </h2>
 
@@ -91,6 +114,7 @@ const LobbyPage = () => {
                             <button
                                 onClick={() => handleJoinLobby(lobbyId)}
                                 style={{
+                                    fontFamily: "Arial, Helvetica, sans-serif",
                                     fontSize: "18px",
                                     color: "#fff",
                                     backgroundColor: "#00ff00",
@@ -105,14 +129,19 @@ const LobbyPage = () => {
                         </div>
                     ))
                 ) : (
-                    <p style={{ fontSize: "18px" }}>
+                    <p
+                        style={{
+                            fontFamily: "Arial, Helvetica, sans-serif",
+                            fontSize: "18px",
+                        }}
+                    >
                         No lobbies available at the moment.
                     </p>
                 )}
             </div>
-
-            <div>
+            <div className="button-background connect-server">
                 <button
+                    className="button-sample"
                     onClick={() => navigate("/server-connected")}
                     style={{
                         fontSize: "20px",

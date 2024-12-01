@@ -36,6 +36,11 @@ const port = process.env.PORT || 5001;
 
 io.on('connection', (socket) => {
     console.log('player connected');
+
+    socket.on("ping", (callback) => {
+        callback();
+    });
+
     socket.on('createLobby', () => {
         const lobbyId = generateLobbyId();
         lobbies[lobbyId] = [socket];
@@ -103,7 +108,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('move', ({ gameId, x, y, isWalking }) => {
-        console.log(`Server received move event in game ${gameId}:`, x, y, isWalking);
+        //console.log(`Server received move event in game ${gameId}:`, x, y, isWalking);
         socket.to(`${gameId}`).emit('move', { x, y, isWalking });
     });
 
