@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketContext";
+import LobbyItem from "../components/LobbyItem";
 import "../pages/serverconnected.css";
 
 const LobbyPage = () => {
     const navigate = useNavigate();
-    const [lobbies, setLobbies] = useState([]);
+    const [lobbies, setLobbies] = useState([]); // Array of lobby objects
     const [errorMessage, setErrorMessage] = useState(null);
     const { socket } = useSocket();
 
@@ -15,7 +16,7 @@ const LobbyPage = () => {
         // Request available lobbies from the server
         socket.emit("getAvailableLobbies");
 
-        // Listen for available lobbies
+        // Listen for available lobbies with detailed information
         socket.on("availableLobbies", (lobbies) => {
             setLobbies(lobbies);
         });
@@ -49,6 +50,7 @@ const LobbyPage = () => {
             navigate("/waiting", { state: { isHost: false, lobbyId } });
         });
     };
+
     return (
         <div
             style={{
@@ -109,24 +111,15 @@ const LobbyPage = () => {
 
             <div style={{ marginBottom: "20px" }}>
                 {lobbies.length > 0 ? (
-                    lobbies.map((lobbyId, index) => (
-                        <div key={index} style={{ marginBottom: "10px" }}>
-                            <button
-                                onClick={() => handleJoinLobby(lobbyId)}
-                                style={{
-                                    fontFamily: "Arial, Helvetica, sans-serif",
-                                    fontSize: "18px",
-                                    color: "#fff",
-                                    backgroundColor: "#00ff00",
-                                    border: "none",
-                                    padding: "10px 20px",
-                                    cursor: "pointer",
-                                    marginRight: "10px",
-                                }}
-                            >
-                                Join Lobby {lobbyId}
-                            </button>
-                        </div>
+                    lobbies.map((lobby, index) => (
+                        <LobbyItem
+                            key={index}
+                            lobbyId={lobby.lobbyId}
+                            players={lobby.players} // Pass the number of players
+                            gameStarted={lobby.gameStarted}
+                            lobbyCreated={lobby.lobbyCreated}
+                            onJoin={handleJoinLobby}
+                        />
                     ))
                 ) : (
                     <p

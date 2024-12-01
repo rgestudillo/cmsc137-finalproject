@@ -47,7 +47,7 @@ const Header = () => {
                 zIndex: 1000,
             }}
         >
-            {latency && (
+            {location.pathname !== "/" && (
                 <button
                     onClick={handleGoBack}
                     style={{

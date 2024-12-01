@@ -194,7 +194,7 @@ class MyGame extends Phaser.Scene {
 
     handleMoveEvent(x, y, isWalking) {
         if (otherPlayer.sprite) {
-            console.log("is walking in movement is: ", isWalking)
+            // console.log("is walking in movement is: ", isWalking)
             // if(isWalking){
             //     otherPlayer.sprite.isWalking = true;
             // }else{
@@ -250,7 +250,7 @@ class MyGame extends Phaser.Scene {
             this.updateFogOfWar(player.sprite.x, player.sprite.y);
             // Handle player movement
             const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);;
-            console.log("player is walking: ", player.sprite.isWalking)
+            // console.log("player is walking: ", player.sprite.isWalking)
             if (playerMoved) {
                 if (player.sprite.isWalking) {
                     if (player.footsteps.isPlaying) {
