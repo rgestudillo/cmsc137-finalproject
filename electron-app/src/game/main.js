@@ -4,9 +4,12 @@ import GameOverScreen from "./screens/GameOverScreen";
 
 const config = {
     type: Phaser.AUTO,
-    parent: "game-container",
-    width: 800,
-    height: 450,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+    },
 };
 
 const StartGame = (parent, socket, role, navigateCallback) => {

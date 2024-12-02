@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketContext";
+import LobbyItem from "../components/LobbyItem";
 import "../pages/serverconnected.css";
 
 const LobbyPage = () => {
     const navigate = useNavigate();
-    const [lobbies, setLobbies] = useState([]);
+    const [lobbies, setLobbies] = useState([]); // Array of lobby objects
     const [errorMessage, setErrorMessage] = useState(null);
     const { socket } = useSocket();
 
@@ -15,7 +16,7 @@ const LobbyPage = () => {
         // Request available lobbies from the server
         socket.emit("getAvailableLobbies");
 
-        // Listen for available lobbies
+        // Listen for available lobbies with detailed information
         socket.on("availableLobbies", (lobbies) => {
             setLobbies(lobbies);
         });
@@ -49,6 +50,7 @@ const LobbyPage = () => {
             navigate("/waiting", { state: { isHost: false, lobbyId } });
         });
     };
+
     return (
         <div
             style={{
@@ -66,9 +68,23 @@ const LobbyPage = () => {
             }}
         >
             <div>
-                <img src="/assets/lobbypage.gif" alt="Eyes Animation" style={{ width: "100%", height: "170%", marginBottom: "10px" }} />
+                <img
+                    src="/assets/lobbypage.gif"
+                    alt="Eyes Animation"
+                    style={{
+                        width: "100%",
+                        height: "170%",
+                        marginBottom: "10px",
+                    }}
+                />
             </div>
-            <p style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "20px", marginBottom: "10px" }}>
+            <p
+                style={{
+                    fontFamily: "Arial, Helvetica, sans-serif",
+                    fontSize: "20px",
+                    marginBottom: "10px",
+                }}
+            >
                 All players are waiting to start the game.
             </p>
             {errorMessage && (
@@ -83,38 +99,40 @@ const LobbyPage = () => {
                 </p>
             )}
 
-            <h2 style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "24px", marginBottom: "20px" }}>
+            <h2
+                style={{
+                    fontFamily: "Arial, Helvetica, sans-serif",
+                    fontSize: "24px",
+                    marginBottom: "20px",
+                }}
+            >
                 Available Lobbies
             </h2>
 
             <div style={{ marginBottom: "20px" }}>
                 {lobbies.length > 0 ? (
-                    lobbies.map((lobbyId, index) => (
-                        <div key={index} style={{ marginBottom: "10px" }}>
-                            <button
-                                onClick={() => handleJoinLobby(lobbyId)}
-                                style={{
-                                    fontFamily: "Arial, Helvetica, sans-serif",
-                                    fontSize: "18px",
-                                    color: "#fff",
-                                    backgroundColor: "#00ff00",
-                                    border: "none",
-                                    padding: "10px 20px",
-                                    cursor: "pointer",
-                                    marginRight: "10px",
-                                }}
-                            >
-                                Join Lobby {lobbyId}
-                            </button>
-                        </div>
+                    lobbies.map((lobby, index) => (
+                        <LobbyItem
+                            key={index}
+                            lobbyId={lobby.lobbyId}
+                            players={lobby.players} // Pass the number of players
+                            gameStarted={lobby.gameStarted}
+                            lobbyCreated={lobby.lobbyCreated}
+                            onJoin={handleJoinLobby}
+                        />
                     ))
                 ) : (
-                    <p style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "18px" }}>
+                    <p
+                        style={{
+                            fontFamily: "Arial, Helvetica, sans-serif",
+                            fontSize: "18px",
+                        }}
+                    >
                         No lobbies available at the moment.
                     </p>
                 )}
             </div>
-            <div className="button-background connect-server" onClick={() => navigate("/")}>
+            <div className="button-background connect-server">
                 <button
                     className="button-sample"
                     onClick={() => navigate("/server-connected")}
@@ -129,7 +147,6 @@ const LobbyPage = () => {
                     Back to Main
                 </button>
             </div>
-
         </div>
     );
 };

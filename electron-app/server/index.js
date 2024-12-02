@@ -7,8 +7,12 @@ const io = require('socket.io')(http, {
 });
 const os = require('os');
 
-let lobbies = {}; // Object to track lobbies
+// Import the Lobby class
+const Lobby = require('./models/Lobby');
 
+let lobbies = {};  // Object to track active lobbies
+
+// Function to generate a unique lobby ID
 function generateLobbyId() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let lobbyId = '';
@@ -19,6 +23,7 @@ function generateLobbyId() {
     return lobbyId;
 }
 
+// Function to get the local IP address
 function getLocalIpAddress() {
     const interfaces = os.networkInterfaces();
     for (const name of Object.keys(interfaces)) {
@@ -41,25 +46,30 @@ io.on('connection', (socket) => {
         callback();
     });
 
+    // Create a new lobby
     socket.on('createLobby', () => {
         const lobbyId = generateLobbyId();
-        lobbies[lobbyId] = [socket];
-        socket.join(lobbyId);  // Join socket to room with lobbyId
-        socket.emit('lobbyCreated', lobbyId);
+        const lobby = new Lobby(lobbyId, socket); // Create a new lobby instance
+
+        lobbies[lobbyId] = lobby;  // Save the lobby in the lobbies object
+        socket.join(lobbyId);       // Join the player to the lobby room
+        socket.emit('lobbyCreated', lobbyId);  // Emit the lobby ID to the player
         console.log(`Lobby created: ${lobbyId}`);
     });
 
+    // Join an existing lobby
     socket.on('joinLobby', (lobbyId) => {
-        if (lobbies[lobbyId]) {
-            if (lobbies[lobbyId].length < 2) {
-                lobbies[lobbyId].push(socket);
-                socket.join(lobbyId);  // Join socket to room with lobbyId
-                socket.emit('opponentConnected');
-                lobbies[lobbyId][0].emit('opponentConnected');
+        const lobby = lobbies[lobbyId];
+
+        if (lobby) {
+            if (lobby.addPlayer(socket)) {
+                socket.join(lobbyId);  // Join the player to the lobby room
+                socket.emit('opponentConnected');  // Notify the player they are connected
+                lobby.players[0].emit('opponentConnected');  // Notify the other player
                 console.log(`Player joined lobby ${lobbyId}`);
             } else {
                 console.log('lobby is full');
-                socket.emit('lobbyFull');  // Emit error if the lobby is full
+                socket.emit('lobbyFull');  // Notify the player that the lobby is full
             }
         } else {
             console.log('lobby not found');
@@ -67,38 +77,45 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Send list of available lobbies
+    // Send list of available lobbies with detailed info
     socket.on('getAvailableLobbies', () => {
-        const availableLobbies = Object.keys(lobbies).filter(lobbyId => lobbies[lobbyId].length < 2);
-        socket.emit('availableLobbies', availableLobbies);  // Send back the available lobbies
+        const availableLobbies = Object.keys(lobbies)
+            .filter(lobbyId => lobbies[lobbyId].isAvailable())  // Check if the lobby is available
+            .map(lobbyId => {
+                const lobby = lobbies[lobbyId];
+                return {
+                    lobbyId: lobby.lobbyId,
+                    players: lobby.players.length, // Number of players in the lobby
+                    gameStarted: lobby.gameStarted,
+                    lobbyCreated: lobby.lobbyCreated, // Lobby creation timestamp
+                };
+            });
+
+        socket.emit('availableLobbies', availableLobbies);  // Send back the detailed lobby info
     });
 
+
+    // Start the game in a lobby
     socket.on('startGame', (lobbyId) => {
-        if (lobbies[lobbyId] && lobbies[lobbyId].length === 2) {
-            // Assign roles to the players
-            const roles = ['ghost', 'player'];
-            const randomIndex = Math.floor(Math.random() * roles.length);
-            const player1Role = roles[randomIndex];
-            const player2Role = roles[1 - randomIndex];
-
-            // Emit roles to the players
-            lobbies[lobbyId][0].emit('startGame', { role: player1Role });
-            lobbies[lobbyId][1].emit('startGame', { role: player2Role });
-
-            console.log(`Game started in lobby ${lobbyId} with roles: Player 1 - ${player1Role}, Player 2 - ${player2Role}`);
+        const lobby = lobbies[lobbyId];
+        if (lobby && lobby.players.length === 2) {
+            const roles = lobby.startGame();
+            if (roles) {
+                console.log(`Game started in lobby ${lobbyId} with roles: Player 1 - ${roles.player1Role}, Player 2 - ${roles.player2Role}`);
+            }
         }
     });
 
-
+    // Handle player disconnect
     socket.on('disconnect', () => {
         for (const lobbyId in lobbies) {
-            const index = lobbies[lobbyId].indexOf(socket);
+            const index = lobbies[lobbyId].players.indexOf(socket);
             if (index > -1) {
-                lobbies[lobbyId].splice(index, 1);
+                lobbies[lobbyId].players.splice(index, 1);
                 socket.leave(lobbyId);  // Leave the room
                 console.log(`Player disconnected from lobby ${lobbyId}`);
 
-                if (lobbies[lobbyId].length === 0) {
+                if (lobbies[lobbyId].players.length === 0) {
                     delete lobbies[lobbyId];
                     console.log(`Lobby ${lobbyId} removed as it's empty`);
                 }
@@ -108,19 +125,17 @@ io.on('connection', (socket) => {
     });
 
     socket.on('move', ({ gameId, x, y, isWalking }) => {
-        //console.log(`Server received move event in game ${gameId}:`, x, y, isWalking);
-        socket.to(`${gameId}`).emit('move', { x, y, isWalking });
+        socket.to(gameId).emit('move', { x, y, isWalking });
     });
 
     socket.on('moveEnd', ({ gameId }) => {
-        socket.to(`${gameId}`).emit('moveEnd');  // Broadcast only within the specific game lobby
+        socket.to(gameId).emit('moveEnd');
     });
 
     socket.on('gameOver', ({ gameId }) => {
         console.log(`Game Over event in game ${gameId}`);
         io.to(gameId).emit('gameOver'); // Notify all players in the game
     });
-
 });
 
 http.listen(port, '0.0.0.0', () => {

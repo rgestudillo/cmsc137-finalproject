@@ -90,8 +90,16 @@ function HomePage() {
                         <div className="button-background" onClick={handleCreateServer}>
                             <button className="button-sample">Host a Server</button>
                         </div>
-                        <div className="button-background">
-                            <button className="button-sample">Exit</button>
+                        <div
+                            className="button-background"
+                            onClick={() => {
+                                setServerUrl(
+                                    "https://server.echoed-chambers.online"
+                                );
+                                navigate("/server-connected");
+                            }}
+                        >
+                            <button className="button-sample">Online</button>
                         </div>
                         <h3 style={{ fontFamily: "Arial", fontSize: "12px" }}>
                             © 2024 Echoed Chambers. All rights reserved.
