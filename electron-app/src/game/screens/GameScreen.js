@@ -32,7 +32,7 @@ class MyGame extends Phaser.Scene {
         console.log("MyGame scene preloaded");
         console.log("socket is: ", this.socket);
 
-        this.load.image('ship', '/assets/ship.png');
+        this.load.image('ship', '/assets/mansion.png');
         this.load.spritesheet('player', '/assets/player.png', {
             frameWidth: PLAYER_SPRITE_WIDTH,
             frameHeight: PLAYER_SPRITE_HEIGHT,
@@ -66,11 +66,11 @@ class MyGame extends Phaser.Scene {
         this.socket.on('gameOver', () => this.showGameOverScreen());
 
         // Add sound effects
-        if(this.role === 'player'){
+        if (this.role === 'player') {
             player.footsteps = this.sound.add('humanwalk', { loop: true, volume: 0.2 });
             otherPlayer.footsteps = this.sound.add('ghostwalk', { loop: true, volume: 0.5, pan: 0 });
         }
-        else{
+        else {
             player.footsteps = this.sound.add('ghostwalk', { loop: true, volume: 0.2 });
             otherPlayer.footsteps = this.sound.add('humanwalk', { loop: true, volume: 0.5, pan: 0 });
         }
@@ -96,7 +96,7 @@ class MyGame extends Phaser.Scene {
         // Fill the mask graphics with a black circle
         const centerX = this.cameras.main.width / 2;  // Center of the screen
         const centerY = this.cameras.main.height / 2; // Center of the screen
-        const radius = 500; // Radius of the circle
+        const radius = 300; // Radius of the circle
 
         this.blackMaskGraphics.fillCircle(centerX, centerY, radius);
 
