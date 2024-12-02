@@ -17,11 +17,11 @@ const LobbyItem = ({ lobbyId, players, gameStarted, lobbyCreated, onJoin }) => {
     let cursor = "pointer";
     let color = "#fff";
 
-    if (isFull) {
-        backgroundColor = "#d9534f"; // Red for full lobby
-        cursor = "not-allowed"; // Disabled pointer
-    } else if (isGameStarted) {
+    if (isGameStarted) {
         backgroundColor = "#6c757d"; // Gray for game started
+        cursor = "not-allowed"; // Disabled pointer
+    } else if (isFull) {
+        backgroundColor = "#d9534f"; // Red for full lobby
         cursor = "not-allowed"; // Disabled pointer
     } else if (isWaitingForPlayers) {
         backgroundColor = "#28a745"; // Green for waiting for players
@@ -49,10 +49,10 @@ const LobbyItem = ({ lobbyId, players, gameStarted, lobbyCreated, onJoin }) => {
             </div>
             <div style={{ flex: 1, textAlign: "center" }}>
                 <p style={{ margin: 0, fontSize: "14px" }}>
-                    {isFull
+                    {isGameStarted
+                        ? "Playing"
+                        : isFull
                         ? "Lobby Full"
-                        : isGameStarted
-                        ? "Game Started"
                         : "Waiting for Players"}
                 </p>
             </div>
