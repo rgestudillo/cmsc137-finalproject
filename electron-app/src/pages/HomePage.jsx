@@ -54,12 +54,18 @@ function HomePage() {
                 }}
             >
                 {/* Image section - 40% width */}
-                <div style={{
-                    width: "40%",
-                    marginTop: "100px",
-                    marginLeft: "100px"
-                }}>
-                    <img src="/assets/home-screen.gif" alt="" style={{ width: "130%", height: "100%" }} />
+                <div
+                    style={{
+                        width: "40%",
+                        marginTop: "100px",
+                        marginLeft: "100px",
+                    }}
+                >
+                    <img
+                        src="/assets/home-screen.gif"
+                        alt=""
+                        style={{ width: "130%", height: "100%" }}
+                    />
                 </div>
 
                 {/* EchoChambers section - 60% width */}
@@ -84,12 +90,6 @@ function HomePage() {
                         />
                     </div>
                     <div className="button-section">
-                        <div className="button-background" onClick={handleConnectToServer}>
-                            <button className="button-sample">Connect to Server</button>
-                        </div>
-                        <div className="button-background" onClick={handleCreateServer}>
-                            <button className="button-sample">Host a Server</button>
-                        </div>
                         <div
                             className="button-background"
                             onClick={() => {
@@ -100,6 +100,22 @@ function HomePage() {
                             }}
                         >
                             <button className="button-sample">Online</button>
+                        </div>
+                        <div
+                            className="button-background"
+                            onClick={handleConnectToServer}
+                        >
+                            <button className="button-sample">
+                                Connect to Server
+                            </button>
+                        </div>
+                        <div
+                            className="button-background"
+                            onClick={handleCreateServer}
+                        >
+                            <button className="button-sample">
+                                Host a Server
+                            </button>
                         </div>
                         <h3 style={{ fontFamily: "Arial", fontSize: "12px" }}>
                             © 2024 Echoed Chambers. All rights reserved.
@@ -112,15 +128,23 @@ function HomePage() {
                                 <input
                                     type="text"
                                     value={serverUrl}
-                                    onChange={(e) => setServerUrlInput(e.target.value)}
+                                    onChange={(e) =>
+                                        setServerUrlInput(e.target.value)
+                                    }
                                     placeholder="http://localhost:8080"
                                     className="modal-input"
                                 />
                                 <div className="modal-buttons">
-                                    <button onClick={handleModalSubmit} className="modal-connect-button">
+                                    <button
+                                        onClick={handleModalSubmit}
+                                        className="modal-connect-button"
+                                    >
                                         Connect
                                     </button>
-                                    <button onClick={() => setShowModal(false)} className="modal-cancel-button">
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="modal-cancel-button"
+                                    >
                                         Cancel
                                     </button>
                                 </div>
