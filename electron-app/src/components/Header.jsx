@@ -25,9 +25,8 @@ const Header = () => {
                 socket.emit("ping", () => {
                     const duration = Date.now() - start;
                     setLatency(duration); // Update latency locally
-                    console.log("Ping duration is:", duration);
                 });
-            }, 1000); // Ping every 1 second
+            }, 5000); // Ping every 1 second
 
             // Cleanup on unmount
             return () => clearInterval(pingInterval);
@@ -47,7 +46,7 @@ const Header = () => {
                 zIndex: 1000,
             }}
         >
-            {latency && (
+            {location.pathname !== "/" && (
                 <button
                     onClick={handleGoBack}
                     style={{

@@ -50,36 +50,43 @@ function HomePage() {
                     width: "100vw",
                     height: "100vh",
                     display: "flex",
-                    justifyContent: "center",
+                    flexDirection: "row",
                 }}
             >
+                {/* Image section - 40% width */}
                 <div
                     style={{
-                        width: "100%",
-                        height: "100%",
-                        marginRight: "160px",
+                        width: "40%",
+                        marginTop: "100px",
+                        marginLeft: "100px",
                     }}
                 >
-                    <div class="front-page-image"></div>
+                    <img
+                        src="/assets/home-screen.gif"
+                        alt=""
+                        style={{ width: "130%", height: "100%" }}
+                    />
                 </div>
+
+                {/* EchoChambers section - 60% width */}
                 <div
                     style={{
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                        width: "100%", // Content section takes up 60% of the space
+                        width: "60%",
                         height: "100%",
-                        gap: "5px",
+                        gap: "50px",
                         marginRight: "100px",
                     }}
                 >
-                    <div className="header-image-container" style={{}}>
+                    <div className="header-image-container">
                         <img
                             src="/assets/EchoedChambers.gif"
                             alt="Echoed Chambers"
                             className="header-image"
-                            style={{ maxWidth: "100%", height: "100%" }}
+                            style={{ maxWidth: "100%", height: "150%" }}
                         />
                     </div>
                     <div className="button-section">
@@ -87,7 +94,7 @@ function HomePage() {
                             className="button-background"
                             onClick={() => {
                                 setServerUrl(
-                                    "http://echoed-shadows.debmac.tech:5001"
+                                    "https://server.echoed-chambers.online"
                                 );
                                 navigate("/server-connected");
                             }}
@@ -110,13 +117,7 @@ function HomePage() {
                                 Host a Server
                             </button>
                         </div>
-
-                        <h3
-                            style={{
-                                fontFamily: "Arial",
-                                fontSize: "12px",
-                            }}
-                        >
+                        <h3 style={{ fontFamily: "Arial", fontSize: "12px" }}>
                             © 2024 Echoed Chambers. All rights reserved.
                         </h3>
                     </div>
@@ -152,7 +153,6 @@ function HomePage() {
                     )}
                 </div>
             </div>
-            {/* CSS for hiding the image on mobile */}
         </div>
     );
 }

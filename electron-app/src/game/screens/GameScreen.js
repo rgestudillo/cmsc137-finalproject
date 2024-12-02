@@ -19,7 +19,7 @@ import { animateMovement } from '../utils/animation';
 let player = {};
 let otherPlayer = {};
 let pressedKeys = [];
-const maxHearingRange = 300;
+const maxHearingRange = 500;
 class MyGame extends Phaser.Scene {
     constructor({ socket, role }) {
         super("MyGame");
@@ -32,7 +32,7 @@ class MyGame extends Phaser.Scene {
         console.log("MyGame scene preloaded");
         console.log("socket is: ", this.socket);
 
-        this.load.image('ship', '/assets/ship.png');
+        this.load.image('ship', '/assets/mansion.png');
         this.load.spritesheet('player', '/assets/player.png', {
             frameWidth: PLAYER_SPRITE_WIDTH,
             frameHeight: PLAYER_SPRITE_HEIGHT,
@@ -41,7 +41,8 @@ class MyGame extends Phaser.Scene {
             frameWidth: GHOST_SPRITE_WIDTH,
             frameHeight: GHOST_SPRITE_HEIGHT,
         });
-        this.load.audio('footsteps', '/assets/walk.wav'); // Replace with your actual file path
+        this.load.audio('humanwalk', '/assets/walk.wav'); // 
+        this.load.audio('ghostwalk', '/assets/ghostwalk.wav'); // 
     }
 
     create() {
@@ -65,8 +66,15 @@ class MyGame extends Phaser.Scene {
         this.socket.on('gameOver', () => this.showGameOverScreen());
 
         // Add sound effects
-        player.footsteps = this.sound.add('footsteps', { loop: true, volume: 0.5 });
-        otherPlayer.footsteps = this.sound.add('footsteps', { loop: true, volume: 0.5, pan: 0 });
+        if (this.role === 'player') {
+            player.footsteps = this.sound.add('humanwalk', { loop: true, volume: 0.2 });
+            otherPlayer.footsteps = this.sound.add('ghostwalk', { loop: true, volume: 0.5, pan: 0 });
+        }
+        else {
+            player.footsteps = this.sound.add('ghostwalk', { loop: true, volume: 0.2 });
+            otherPlayer.footsteps = this.sound.add('humanwalk', { loop: true, volume: 0.5, pan: 0 });
+        }
+
         player.isWalking = false;
 
         // Mask the screen black
@@ -74,6 +82,9 @@ class MyGame extends Phaser.Scene {
 
         // Clean up resources when scene shuts down
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanupScene());
+
+        this.cameras.main.setZoom(3); // Zoom level (1 = default, >1 = zoom in, <1 = zoom out)
+
     }
 
     createScreenMask() {
@@ -85,7 +96,7 @@ class MyGame extends Phaser.Scene {
         // Fill the mask graphics with a black circle
         const centerX = this.cameras.main.width / 2;  // Center of the screen
         const centerY = this.cameras.main.height / 2; // Center of the screen
-        const radius = 100; // Radius of the circle
+        const radius = 300; // Radius of the circle
 
         this.blackMaskGraphics.fillCircle(centerX, centerY, radius);
 
@@ -194,7 +205,7 @@ class MyGame extends Phaser.Scene {
 
     handleMoveEvent(x, y, isWalking) {
         if (otherPlayer.sprite) {
-            console.log("is walking in movement is: ", isWalking)
+            // console.log("is walking in movement is: ", isWalking)
             // if(isWalking){
             //     otherPlayer.sprite.isWalking = true;
             // }else{
@@ -250,7 +261,7 @@ class MyGame extends Phaser.Scene {
             this.updateFogOfWar(player.sprite.x, player.sprite.y);
             // Handle player movement
             const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);;
-            console.log("player is walking: ", player.sprite.isWalking)
+            // console.log("player is walking: ", player.sprite.isWalking)
             if (playerMoved) {
                 if (player.sprite.isWalking) {
                     if (player.footsteps.isPlaying) {

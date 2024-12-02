@@ -2,7 +2,12 @@ import { PLAYER_SPEED, GHOST_SPEED, SHIP_HEIGHT, SHIP_WIDTH } from './constants'
 import { mapBounds } from './mapBounds';
 
 const isWithinMovementBoundaries = (x, y) => {
-    return !mapBounds[y] ? true : !mapBounds[y].includes(x);
+    // Convert coordinates to integers to align with map grid
+    const roundedX = Math.floor(x);
+    const roundedY = Math.floor(y);
+
+    // Check if within bounds
+    return !mapBounds[roundedY] ? true : !mapBounds[roundedY].includes(roundedX);
 };
 
 export const movePlayer = (keys, player, role) => {
