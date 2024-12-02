@@ -87,7 +87,7 @@ function HomePage() {
                             className="button-background"
                             onClick={() => {
                                 setServerUrl(
-                                    "http://echoed-shadows.debmac.tech:5001"
+                                    "https://server.echoed-chambers.online"
                                 );
                                 navigate("/server-connected");
                             }}
