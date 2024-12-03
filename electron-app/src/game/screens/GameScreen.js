@@ -41,8 +41,9 @@ class MyGame extends Phaser.Scene {
             frameWidth: GHOST_SPRITE_WIDTH,
             frameHeight: GHOST_SPRITE_HEIGHT,
         });
-        this.load.audio('humanwalk', '/assets/walk.wav'); // 
-        this.load.audio('ghostwalk', '/assets/ghostwalk.wav'); // 
+        this.load.audio('humanwalk', '/assets/walk.wav');
+        this.load.audio('ghostwalk', '/assets/ghostwalk.wav');
+        this.load.image('cabinet', '/assets/objects/Cabinet.png');
     }
 
     create() {
@@ -143,7 +144,7 @@ class MyGame extends Phaser.Scene {
         console.log("My role is: ", this.role);
 
         const ship = this.add.image(0, 0, 'ship');
-
+        const cabinet = this.add.image(0, 0, 'cabinet')
         // Dynamic animation keys
         const playerAnimationKey = this.role === 'player' ? 'player-running' : 'ghost-running';
         const otherPlayerAnimationKey = this.role === 'player' ? 'ghost-running' : 'player-running';
@@ -191,7 +192,38 @@ class MyGame extends Phaser.Scene {
         }
     }
 
+    handleHiding() {
+        if (player.sprite) {
+            const dx = 0 - player.sprite.x; // Cabinet X is 0
+            const dy = 0 - player.sprite.y; // Cabinet Y is 0
+            const distanceToCabinet = Math.sqrt(dx * dx + dy * dy);
+
+            // Check if player is close enough to the cabinet
+            if (distanceToCabinet <= 50) { // 50 units proximity
+                player.sprite.isHidden = !player.sprite.isHidden; // Toggle hiding state
+
+                if (player.sprite.isHidden) {
+                    console.log("Player is hiding.");
+                    player.sprite.setVisible(false); // Hide the player visually
+                } else {
+                    console.log("Player is no longer hiding.");
+                    player.sprite.setVisible(true); // Show the player visually
+                }
+            } else {
+                console.log("Player is too far from the cabinet to hide.");
+            }
+        }
+    }
+
+
     setupInput() {
+        const gKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
+
+        gKey.on('down', () => {
+            this.handleHiding(); // Call the hiding function on 'G' key press
+        });
+
+        // Existing movement input handling
         this.input.keyboard.on('keydown', (e) => {
             if (!pressedKeys.includes(e.code)) {
                 pressedKeys.push(e.code);
@@ -202,6 +234,7 @@ class MyGame extends Phaser.Scene {
             pressedKeys = pressedKeys.filter((key) => key !== e.code);
         });
     }
+
 
     handleMoveEvent(x, y, isWalking) {
         if (otherPlayer.sprite) {
@@ -221,8 +254,6 @@ class MyGame extends Phaser.Scene {
             otherPlayer.sprite.x = x;
             otherPlayer.sprite.y = y;
             otherPlayer.moving = true;
-
-
 
             if (isWalking) {
                 if (otherPlayer.footsteps.isPlaying) {
@@ -251,14 +282,16 @@ class MyGame extends Phaser.Scene {
 
     update() {
         if (player.sprite) {
+
+            if (player.sprite.isHidden) {
+                return; // Skip update logic if the player is hidden
+            }
+
             const playerAnimationKey = this.role === 'player' ? 'player-running' : 'ghost-running';
 
             // Center camera on player
             this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
-
-            // Update fog of war mask
-            this.updateFogOfWar(player.sprite.x, player.sprite.y);
             // Handle player movement
             const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);;
             // console.log("player is walking: ", player.sprite.isWalking)
@@ -330,13 +363,6 @@ class MyGame extends Phaser.Scene {
             // Update the footsteps audio properties
             otherPlayer.footsteps.setVolume(volume);
             otherPlayer.footsteps.setPan(pan);
-
-            // Play or stop footsteps based on movement
-            // if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {   
-            //     otherPlayer.footsteps.play();
-            // } else if (!otherPlayer.moving && otherPlayer.footsteps.isPlaying) {
-            //     otherPlayer.footsteps.stop();
-            // }
         }
 
         // Call updateHearingRange to update the visual
@@ -352,13 +378,6 @@ class MyGame extends Phaser.Scene {
             if (distance <= 20) {
                 this.socket.emit('gameOver', { gameId: this.gameId });
             }
-        }
-    }
-
-    updateFogOfWar(playerX, playerY) {
-        if (this.fogMaskGraphics) {
-            this.fogMaskGraphics.clear();
-            this.fogMaskGraphics.fillCircle(playerX, playerY, 100); // 100 radius visibility
         }
     }
 }
