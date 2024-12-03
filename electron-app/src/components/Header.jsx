@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSocket } from "../context/SocketContext"; // Import the socket context
-import { IoArrowBack } from "react-icons/io5";
+import { IoArrowBack, IoHome } from "react-icons/io5"; // Import home and back icons
+
 const Header = () => {
     const [latency, setLatency] = useState(null); // Store latency locally
-    const { socket } = useSocket(); // Access socket from context
+    const { socket, serverUrl } = useSocket();
     const navigate = useNavigate();
     const location = useLocation(); // Get current location
 
+    // Handle go back to the previous route
     const handleGoBack = () => {
-        navigate(-1); // Navigates back to the previous page
+        console.log("handle go back");
+        socket.emit("leaveAllLobbies", () => {
+            console.log("Left all lobbies");
+        });
+        navigate("/server-connected");
     };
 
+    // Handle navigate to home ("/")
+    const handleGoHome = () => {
+        navigate("/");
+    };
+
+    // Set up ping to track latency
     useEffect(() => {
         if (location.pathname === "/") {
             setLatency(null); // Set latency to null for the root path
@@ -26,12 +38,42 @@ const Header = () => {
                     const duration = Date.now() - start;
                     setLatency(duration); // Update latency locally
                 });
-            }, 5000); // Ping every 1 second
+            }, 3000);
 
             // Cleanup on unmount
             return () => clearInterval(pingInterval);
         }
     }, [socket, location.pathname]);
+
+    // Define navigation configuration
+    const navConfig = {
+        "/server-connected": {
+            icon: <IoHome size={24} />, // Home icon
+            onClick: handleGoHome,
+            label: "Connecting",
+        },
+        "/": {
+            icon: null, // No icon on root
+            onClick: null,
+            label: "Not Connected",
+        },
+        "*": {
+            icon: <IoArrowBack size={24} />, // Back icon
+            onClick: handleGoBack,
+            label: "Leave",
+        },
+    };
+
+    // Get the button config based on the current path
+    const getButtonConfig = () => {
+        const path = location.pathname;
+        if (navConfig[path]) {
+            return navConfig[path];
+        }
+        return navConfig["*"]; // Default to the "Leave" button for all other routes
+    };
+
+    const buttonConfig = getButtonConfig();
 
     return (
         <header
@@ -46,9 +88,9 @@ const Header = () => {
                 zIndex: 1000,
             }}
         >
-            {location.pathname !== "/" && (
+            {buttonConfig.icon && (
                 <button
-                    onClick={handleGoBack}
+                    onClick={buttonConfig.onClick}
                     style={{
                         padding: "0",
                         cursor: "pointer",
@@ -61,9 +103,20 @@ const Header = () => {
                         marginLeft: "10px",
                     }}
                 >
-                    <IoArrowBack size={24} /> {/* Icon only */}
+                    {buttonConfig.icon} {/* Icon */}
                 </button>
             )}
+            <div
+                style={{
+                    color: "white",
+                    fontSize: "1rem",
+                    textAlign: "center",
+                    flex: 1, // Occupy the central space
+                }}
+            >
+                {serverUrl || ""}
+            </div>
+
             <div
                 style={{
                     color: "white",
@@ -72,7 +125,8 @@ const Header = () => {
                     marginRight: "20px",
                 }}
             >
-                {latency !== null ? `${latency}ms` : "Not Connected"}
+                {latency !== null ? `${latency}ms` : buttonConfig.label}{" "}
+                {/* Display latency or label */}
             </div>
         </header>
     );
