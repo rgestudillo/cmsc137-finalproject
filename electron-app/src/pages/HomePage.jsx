@@ -42,9 +42,9 @@ function HomePage() {
     };
 
     return (
-        <div className="row">
-            {/* <div
-                className="image-wrapper"
+        <div>
+            <div
+                className="homepage-container"
                 style={{
                     backgroundImage: "url('/assets/test.png')", // Replace with your image URL
                     width: "100vw",
@@ -52,32 +52,44 @@ function HomePage() {
                     display: "flex",
                     flexDirection: "row",
                 }}
-            > */}
+            >
                 {/* Image section - 40% width */}
-                <div className="imgWrapper">
-                    <img src="/assets/home-screen.gif" alt=""/>
+                <div
+                    style={{
+                        width: "40%",
+                        marginTop: "100px",
+                        marginLeft: "100px",
+                    }}
+                >
+                    <img
+                        src="/assets/home-screen.gif"
+                        alt=""
+                        style={{ width: "130%", height: "100%" }}
+                    />
                 </div>
 
                 {/* EchoChambers section - 60% width */}
-                <div className="contentWrapper">
-                    <div className="content">
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "60%",
+                        height: "100%",
+                        gap: "50px",
+                        marginRight: "100px",
+                    }}
+                >
+                    <div className="header-image-container">
                         <img
                             src="/assets/EchoedChambers.gif"
                             alt="Echoed Chambers"
                             className="header-image"
+                            style={{ maxWidth: "100%", height: "150%" }}
                         />
                     </div>
                     <div className="button-section">
-                        <div className="button-background" onClick={handleConnectToServer}>
-                            <button className="button-sample">Connect to Server</button>
-                        </div>
-                        <div className="button-background" onClick={handleCreateServer}>
-                            <button className="button-sample">Host a Server</button>
-                        </div>
-<<<<<<< HEAD
-                        <div className="button-background">
-                            <button className="button-sample">About Game</button>
-=======
                         <div
                             className="button-background"
                             onClick={() => {
@@ -88,9 +100,24 @@ function HomePage() {
                             }}
                         >
                             <button className="button-sample">Online</button>
->>>>>>> edc87dc6f7c35df54f71a30b482052c562410cc4
                         </div>
-                        <h3 style={{ fontFamily: "Poppins", fontSize: "12px" }}>
+                        <div
+                            className="button-background"
+                            onClick={handleConnectToServer}
+                        >
+                            <button className="button-sample">
+                                Connect to Server
+                            </button>
+                        </div>
+                        <div
+                            className="button-background"
+                            onClick={handleCreateServer}
+                        >
+                            <button className="button-sample">
+                                Host a Server
+                            </button>
+                        </div>
+                        <h3 style={{ fontFamily: "Arial", fontSize: "12px" }}>
                             © 2024 Echoed Chambers. All rights reserved.
                         </h3>
                     </div>
@@ -101,15 +128,23 @@ function HomePage() {
                                 <input
                                     type="text"
                                     value={serverUrl}
-                                    onChange={(e) => setServerUrlInput(e.target.value)}
+                                    onChange={(e) =>
+                                        setServerUrlInput(e.target.value)
+                                    }
                                     placeholder="http://localhost:8080"
                                     className="modal-input"
                                 />
                                 <div className="modal-buttons">
-                                    <button onClick={handleModalSubmit} className="modal-connect-button">
+                                    <button
+                                        onClick={handleModalSubmit}
+                                        className="modal-connect-button"
+                                    >
                                         Connect
                                     </button>
-                                    <button onClick={() => setShowModal(false)} className="modal-cancel-button">
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="modal-cancel-button"
+                                    >
                                         Cancel
                                     </button>
                                 </div>
@@ -117,7 +152,7 @@ function HomePage() {
                         </div>
                     )}
                 </div>
-            {/* </div> */}
+            </div>
         </div>
     );
 }

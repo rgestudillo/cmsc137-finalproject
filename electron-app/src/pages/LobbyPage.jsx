@@ -7,6 +7,8 @@ import "../pages/serverconnected.css";
 const LobbyPage = () => {
     const navigate = useNavigate();
     const [lobbies, setLobbies] = useState([]); // Array of lobby objects
+    const [filteredLobbies, setFilteredLobbies] = useState([]); // Filtered array of lobbies
+    const [searchQuery, setSearchQuery] = useState(""); // Search query
     const [errorMessage, setErrorMessage] = useState(null);
     const { socket } = useSocket();
 
@@ -19,6 +21,7 @@ const LobbyPage = () => {
         // Listen for available lobbies with detailed information
         socket.on("availableLobbies", (lobbies) => {
             setLobbies(lobbies);
+            setFilteredLobbies(lobbies); // Initialize filtered lobbies
         });
 
         // Handle disconnection
@@ -51,15 +54,28 @@ const LobbyPage = () => {
         });
     };
 
+    const handleSearch = (e) => {
+        const query = e.target.value.toLowerCase();
+        setSearchQuery(query);
+
+        // Filter lobbies based on the search query
+        const filtered = lobbies.filter(
+            (lobby) =>
+                lobby.lobbyId.toLowerCase().includes(query) ||
+                lobby.players.toString().includes(query) // Example: filter by players or lobby ID
+        );
+        setFilteredLobbies(filtered);
+    };
+
     return (
         <div
             style={{
                 textAlign: "center",
                 color: "#ffffff",
                 backgroundImage: "url('/assets/connect-join.png')", // Replace with your image URL
-                backgroundSize: "cover", // Makes sure the image covers the entire div
-                backgroundPosition: "center", // Centers the image
-                width: "100vw", // Changed from 100vh to 100vw for full width
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                width: "100vw",
                 height: "100vh",
                 display: "flex",
                 flexDirection: "column",
@@ -78,19 +94,7 @@ const LobbyPage = () => {
                     }}
                 />
             </div>
-<<<<<<< HEAD
-            <p style={{ fontFamily: "'Poppins', sans-serif", fontSize: "20px", marginTop: "30px" }}>
-=======
-            <p
-                style={{
-                    fontFamily: "Arial, Helvetica, sans-serif",
-                    fontSize: "20px",
-                    marginBottom: "10px",
-                }}
-            >
->>>>>>> edc87dc6f7c35df54f71a30b482052c562410cc4
-                All players are waiting to start the game.
-            </p>
+
             {errorMessage && (
                 <p
                     style={{
@@ -103,9 +107,6 @@ const LobbyPage = () => {
                 </p>
             )}
 
-<<<<<<< HEAD
-            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: "24px", marginBottom: "20px" }}>
-=======
             <h2
                 style={{
                     fontFamily: "Arial, Helvetica, sans-serif",
@@ -113,36 +114,40 @@ const LobbyPage = () => {
                     marginBottom: "20px",
                 }}
             >
->>>>>>> edc87dc6f7c35df54f71a30b482052c562410cc4
                 Available Lobbies
             </h2>
 
-            <div style={{ marginBottom: "20px" }}>
-                {lobbies.length > 0 ? (
-<<<<<<< HEAD
-                    lobbies.map((lobbyId, index) => (
-                        <div key={index} style={{ marginBottom: "10px" }}>
-                            <button
-                                onClick={() => handleJoinLobby(lobbyId)}
-                                style={{
-                                    fontFamily: "'Poppins', sans-serif",
-                                    fontSize: "18px",
-                                    color: "#fff",
-                                    backgroundColor: "#00ff00",
-                                    border: "none",
-                                    padding: "10px 20px",
-                                    cursor: "pointer",
-                                    marginRight: "10px",
-                                }}
-                            >
-                                Join Lobby {lobbyId}
-                            </button>
-                        </div>
-                    ))
-                ) : (
-                        <p style={{ fontFamily: "'Poppins', sans-serif", fontSize: "18px", color: "#22c744", }}>
-=======
-                    lobbies.map((lobby, index) => (
+            {/* Search input */}
+            <input
+                type="text"
+                placeholder="Search for a lobby..."
+                value={searchQuery}
+                onChange={handleSearch}
+                style={{
+                    marginBottom: "20px",
+                    padding: "10px",
+                    fontSize: "16px",
+                    width: "80%",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(255, 255, 255, 0.5)",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    color: "#fff",
+                }}
+            />
+            <div
+                style={{
+                    maxHeight: "50vh",
+                    overflowY: "auto",
+                    width: "80%",
+                    marginBottom: "20px",
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                    padding: "10px",
+                    borderRadius: "8px",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                }}
+            >
+                {filteredLobbies.length > 0 ? (
+                    filteredLobbies.map((lobby, index) => (
                         <LobbyItem
                             key={index}
                             lobbyId={lobby.lobbyId}
@@ -159,17 +164,10 @@ const LobbyPage = () => {
                             fontSize: "18px",
                         }}
                     >
->>>>>>> edc87dc6f7c35df54f71a30b482052c562410cc4
-                        No lobbies available at the moment.
+                        No lobbies available for the current search.
                     </p>
                 )}
             </div>
-<<<<<<< HEAD
-                <div className="button-background connect-server" onClick={() => navigate("/")}>
-                    <button className="button-sample"onClick={() => navigate("/server-connected")}>
-                        Back to Main
-                    </button>
-=======
             <div className="button-background connect-server">
                 <button
                     className="button-sample"
@@ -184,7 +182,6 @@ const LobbyPage = () => {
                 >
                     Back to Main
                 </button>
->>>>>>> edc87dc6f7c35df54f71a30b482052c562410cc4
             </div>
         </div>
     );
