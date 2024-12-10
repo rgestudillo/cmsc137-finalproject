@@ -16,7 +16,6 @@ import {
 } from '../utils/constants';
 import { movePlayer } from '../utils/movement';
 import { animateMovement } from '../utils/animation';
-import { mapBounds } from '../utils/mapBounds';
 
 let player = {};
 let otherPlayer = {};
@@ -64,7 +63,6 @@ class MyGame extends Phaser.Scene {
         this.load.audio('humanwalk', '/assets/walk.wav'); //
         this.load.audio('ghostwalk', '/assets/ghostwalk.wav'); //
         this.load.audio("music", '/assets/gameMusic.wav')
-        this.load.image('cabinet', '/assets/objects/Cabinet.png');
         this.load.audio('cabinetSound', '/assets/cabinetSound.wav');
     }
 
@@ -117,12 +115,12 @@ class MyGame extends Phaser.Scene {
 
 
         // Mask the screen black
-        // this.createScreenMask();
+        this.createScreenMask();
 
         // Clean up resources when scene shuts down
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanupScene());
 
-        // this.cameras.main.setZoom(3); // Zoom level (1 = default, >1 = zoom in, <1 = zoom out)
+        this.cameras.main.setZoom(3); // Zoom level (1 = default, >1 = zoom in, <1 = zoom out)
 
     }
 
