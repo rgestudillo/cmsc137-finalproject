@@ -41,8 +41,9 @@ class MyGame extends Phaser.Scene {
             frameWidth: GHOST_SPRITE_WIDTH,
             frameHeight: GHOST_SPRITE_HEIGHT,
         });
-        this.load.audio('humanwalk', '/assets/walk.wav');
-        this.load.audio('ghostwalk', '/assets/ghostwalk.wav');
+        this.load.audio('humanwalk', '/assets/walk.wav'); //
+        this.load.audio('ghostwalk', '/assets/ghostwalk.wav'); //
+        this.load.audio("music", '/assets/gameMusic.wav')
         this.load.image('cabinet', '/assets/objects/Cabinet.png');
     }
 
@@ -56,6 +57,17 @@ class MyGame extends Phaser.Scene {
 
         // Emit joinLobby event with gameId
         this.socket.emit('joinLobby', this.gameId);
+        this.music = this.sound.add("music")
+        var musicConfig = {
+            mute: false,
+            volume: 0.2,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 0
+        }
+        this.music.play(musicConfig)
 
         // Remove existing listeners to prevent duplication
         this.cleanupSocketListeners();

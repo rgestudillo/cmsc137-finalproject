@@ -176,17 +176,7 @@ const LobbyPage = () => {
                 )}
             </div>
             <div className="button-background connect-server">
-                <button
-                    className="button-sample"
-                    onClick={() => navigate("/server-connected")}
-                    style={{
-                        fontSize: "20px",
-                        color: "#fff",
-                        border: "none",
-                        padding: "10px 20px",
-                        cursor: "pointer",
-                    }}
-                >
+                <button className="button-sample" onClick={() => navigate("/server-connected")}>
                     Back to Main
                 </button>
             </div>
