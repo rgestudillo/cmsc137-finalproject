@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import GameScreen from "./screens/GameScreen";
-import GameOverScreen from "./screens/GameOverScreen";
 
 const config = {
     type: Phaser.AUTO,
@@ -17,8 +16,8 @@ const StartGame = (parent, socket, role, navigateCallback) => {
         ...config,
         parent,
         scene: [
-            new GameScreen({ socket, role }), // Pass socket and role to GameScreen
-            new GameOverScreen(navigateCallback), // Pass navigateCallback to GameOverScreen
+            new GameScreen({ socket, role, navigateCallback }), // Pass socket and role to GameScreen
+
         ],
     });
 };

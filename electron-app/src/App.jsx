@@ -13,7 +13,8 @@ import LobbyPage from "./pages/LobbyPage";
 import ServerConnectedPage from "./pages/ServerConnectedPage";
 import Game from "./pages/Game";
 import Header from "./components/Header";
-
+import WinnerPage from "./pages/Winner";
+import LoserPage from "./pages/Loser";
 function App() {
     const phaserRef = useRef();
     const [canMoveSprite, setCanMoveSprite] = useState(false);
@@ -35,7 +36,6 @@ function AppContent({ currentScene }) {
     return (
         <div id="app">
             <Header />
-
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route
@@ -48,6 +48,8 @@ function AppContent({ currentScene }) {
                     path="/game/:gameId"
                     element={<Game currentActiveScene={currentScene} />}
                 />
+                <Route path="/winner" element={<WinnerPage />} />
+                <Route path="/loser" element={<LoserPage />} />
             </Routes>
         </div>
     );
