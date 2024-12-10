@@ -13,9 +13,9 @@ const isWithinMovementBoundaries = (x, y) => {
 export const movePlayer = (keys, player, role) => {
 
     player.isWalking = false;
-    if(keys.includes('ShiftLeft')){
+    if (keys.includes('ShiftLeft')) {
         player.isWalking = true;
-    } 
+    }
     let playerMoved = false;
     const speed = role === 'ghost' ? GHOST_SPEED : PLAYER_SPEED; // Determine speed based on role
     const finalSpeed = player.isWalking ? speed / 2 : speed; // Halve the speed if walking
