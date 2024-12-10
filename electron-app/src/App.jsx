@@ -21,6 +21,7 @@ function App() {
         <Router>
             <div id="app">
                 <Header />
+                <audio src="/assets/gameMusic.wav" autoPlay loop controls={false} />
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route

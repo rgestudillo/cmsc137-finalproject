@@ -41,8 +41,9 @@ class MyGame extends Phaser.Scene {
             frameWidth: GHOST_SPRITE_WIDTH,
             frameHeight: GHOST_SPRITE_HEIGHT,
         });
-        this.load.audio('humanwalk', '/assets/walk.wav'); // 
-        this.load.audio('ghostwalk', '/assets/ghostwalk.wav'); // 
+        this.load.audio('humanwalk', '/assets/walk.wav'); //
+        this.load.audio('ghostwalk', '/assets/ghostwalk.wav'); //
+        this.load.audio("music", '/assets/gameMusic.wav')
     }
 
     create() {
@@ -55,6 +56,17 @@ class MyGame extends Phaser.Scene {
 
         // Emit joinLobby event with gameId
         this.socket.emit('joinLobby', this.gameId);
+        this.music = this.sound.add("music")
+        var musicConfig = {
+            mute: false,
+            volume: 0.2,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 0
+        }
+        this.music.play(musicConfig)
 
         // Remove existing listeners to prevent duplication
         this.cleanupSocketListeners();
@@ -332,7 +344,7 @@ class MyGame extends Phaser.Scene {
             otherPlayer.footsteps.setPan(pan);
 
             // Play or stop footsteps based on movement
-            // if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {   
+            // if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {
             //     otherPlayer.footsteps.play();
             // } else if (!otherPlayer.moving && otherPlayer.footsteps.isPlaying) {
             //     otherPlayer.footsteps.stop();
