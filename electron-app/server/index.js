@@ -167,7 +167,7 @@ io.on("connection", (socket) => {
                         io.to(lobbyId).emit("timerUpdate", remainingTime);
                     } else {
                         clearInterval(interval);
-                        io.to(lobbyId).emit("gameOver");
+                        io.to(lobbyId).emit("gameOver", { gameId: lobbyId, winner: 'ghost' });
                         console.log(`Game over in lobby ${lobbyId}`);
                     }
                 }, 1000);
@@ -205,11 +205,11 @@ io.on("connection", (socket) => {
         socket.to(gameId).emit("moveEnd");
     });
 
-    socket.on("gameOver", ({ gameId }) => {
-        console.log(`Game Over event in game ${gameId}`);
+    socket.on("gameOver", ({ gameId, winner }) => {
+        console.log(`Game Over event in game ${gameId}, Winner: ${winner}`);
 
-        // Notify all players in the game
-        io.to(gameId).emit("gameOver");
+        // Notify all players in the game about the game over event and the winner
+        io.to(gameId).emit("gameOver", { winner });
 
         // After notifying players, remove the lobby from the lobbies object
         for (const lobbyId in lobbies) {
