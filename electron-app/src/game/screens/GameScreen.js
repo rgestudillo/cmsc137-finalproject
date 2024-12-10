@@ -89,26 +89,45 @@ class MyGame extends Phaser.Scene {
     }
 
     createScreenMask() {
-        // Create a graphics object for the mask
-        this.blackMaskGraphics = this.make.graphics({
-            fillStyle: { color: 0x000000 }, // Black fill
-        }, false);
-
-        // Fill the mask graphics with a black circle
-        const centerX = this.cameras.main.width / 2;  // Center of the screen
-        const centerY = this.cameras.main.height / 2; // Center of the screen
-        const radius = 300; // Radius of the circle
-
-        this.blackMaskGraphics.fillCircle(centerX, centerY, radius);
-
-        // Create the mask from the graphics object
-        this.blackMask = this.blackMaskGraphics.createGeometryMask();
-
-        // Apply the mask to the camera
-        this.cameras.main.setMask(this.blackMask);
-
-        console.log("Screen masked with a circle");
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = 350; // Adjust as needed
+    
+        // Create a canvas texture
+        const gradientTextureKey = 'gradientMask';
+        const gradientTexture = this.textures.createCanvas(gradientTextureKey, width, height);
+        const ctx = gradientTexture.getContext();
+    
+        // Create a radial gradient
+        // The first circle (0 radius) is at the center and the second circle (radius) is at the fade-out boundary
+        const radialGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+    
+        // White (fully opaque) at the center, transparent at the edges.
+        // White areas will reveal the camera, transparent areas will hide it.
+        radialGradient.addColorStop(0, 'rgba(255,255,255,1)');
+        radialGradient.addColorStop(1, 'rgba(255,255,255,0)');
+    
+        // Fill the canvas with the gradient
+        ctx.fillStyle = radialGradient;
+        ctx.fillRect(0, 0, width, height);
+    
+        // Refresh the texture so Phaser can use it
+        gradientTexture.refresh();
+    
+        // Create a sprite using the gradient texture
+        const gradientSprite = this.add.image(0, 0, gradientTextureKey).setOrigin(0);
+    
+        // Create a bitmap mask from the gradient sprite
+        const bitmapMask = gradientSprite.createBitmapMask();
+    
+        // Apply the bitmap mask to the camera
+        this.cameras.main.setMask(bitmapMask);
+    
+        console.log("Screen masked with a gradient circle");
     }
+    
 
 
     cleanupSocketListeners() {
