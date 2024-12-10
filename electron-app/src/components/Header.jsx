@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketContext"; // Import the socket context
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import './header.css';
 
 const Header = () => {
     const [latency, setLatency] = useState(null); // Store latency locally
@@ -29,46 +32,16 @@ const Header = () => {
     }, [socket]);
 
     return (
-        <header
-            style={{
-                position: "fixed",
-                top: 0,
-                width: "100%",
-                padding: "15px 20px",
-                backgroundColor: "#2E8B57", // Green background color
-                display: "flex",
-                alignItems: "center",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                zIndex: 1000,
-            }}
-        >
+        <header className="header">
             <button
                 onClick={handleGoBack}
-                style={{
-                    padding: "10px 20px",
-                    cursor: "pointer",
-                    backgroundColor: "#4CAF50",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    marginRight: "15px",
-                    marginLeft: "15px",
-                }}
+                className="back-button"
             >
-                Back
+                <FontAwesomeIcon icon={faArrowLeft} /> {/* Icon */}
             </button>
-            <h1 style={{ margin: 0, color: "white", fontSize: "1.5rem" }}>
-                Echoed Shadows
-            </h1>
+            
             {/* Display latency in the header */}
-            <div
-                style={{
-                    color: "white",
-                    marginLeft: "auto",
-                    fontSize: "1rem",
-                    marginRight: "20px",
-                }}
-            >
+            <div className="latency">
                 {latency !== null
                     ? `Latency: ${latency}ms`
                     : "Waiting for latency..."}

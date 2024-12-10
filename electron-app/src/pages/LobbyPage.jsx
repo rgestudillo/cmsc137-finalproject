@@ -68,7 +68,7 @@ const LobbyPage = () => {
             <div>
                 <img src="/assets/lobbypage.gif" alt="Eyes Animation" style={{ width: "100%", height: "170%", marginBottom: "10px" }} />
             </div>
-            <p style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "20px", marginBottom: "10px" }}>
+            <p style={{ fontFamily: "'Poppins', sans-serif", fontSize: "20px", marginTop: "30px" }}>
                 All players are waiting to start the game.
             </p>
             {errorMessage && (
@@ -83,7 +83,7 @@ const LobbyPage = () => {
                 </p>
             )}
 
-            <h2 style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "24px", marginBottom: "20px" }}>
+            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: "24px", marginBottom: "20px" }}>
                 Available Lobbies
             </h2>
 
@@ -94,7 +94,7 @@ const LobbyPage = () => {
                             <button
                                 onClick={() => handleJoinLobby(lobbyId)}
                                 style={{
-                                    fontFamily: "Arial, Helvetica, sans-serif",
+                                    fontFamily: "'Poppins', sans-serif",
                                     fontSize: "18px",
                                     color: "#fff",
                                     backgroundColor: "#00ff00",
@@ -109,27 +109,16 @@ const LobbyPage = () => {
                         </div>
                     ))
                 ) : (
-                    <p style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "18px" }}>
+                        <p style={{ fontFamily: "'Poppins', sans-serif", fontSize: "18px", color: "#22c744", }}>
                         No lobbies available at the moment.
                     </p>
                 )}
             </div>
-            <div className="button-background connect-server" onClick={() => navigate("/")}>
-                <button
-                    className="button-sample"
-                    onClick={() => navigate("/server-connected")}
-                    style={{
-                        fontSize: "20px",
-                        color: "#fff",
-                        border: "none",
-                        padding: "10px 20px",
-                        cursor: "pointer",
-                    }}
-                >
-                    Back to Main
-                </button>
+                <div className="button-background connect-server" onClick={() => navigate("/")}>
+                    <button className="button-sample"onClick={() => navigate("/server-connected")}>
+                        Back to Main
+                    </button>
             </div>
-
         </div>
     );
 };

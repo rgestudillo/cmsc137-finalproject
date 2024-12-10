@@ -42,9 +42,9 @@ function HomePage() {
     };
 
     return (
-        <div>
-            <div
-                className="homepage-container"
+        <div className="row">
+            {/* <div
+                className="image-wrapper"
                 style={{
                     backgroundImage: "url('/assets/test.png')", // Replace with your image URL
                     width: "100vw",
@@ -52,35 +52,19 @@ function HomePage() {
                     display: "flex",
                     flexDirection: "row",
                 }}
-            >
+            > */}
                 {/* Image section - 40% width */}
-                <div style={{
-                    width: "40%",
-                    marginTop: "100px",
-                    marginLeft: "100px"
-                }}>
-                    <img src="/assets/home-screen.gif" alt="" style={{ width: "130%", height: "100%" }} />
+                <div className="imgWrapper">
+                    <img src="/assets/home-screen.gif" alt=""/>
                 </div>
 
                 {/* EchoChambers section - 60% width */}
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "60%",
-                        height: "100%",
-                        gap: "50px",
-                        marginRight: "100px",
-                    }}
-                >
-                    <div className="header-image-container">
+                <div className="contentWrapper">
+                    <div className="content">
                         <img
                             src="/assets/EchoedChambers.gif"
                             alt="Echoed Chambers"
                             className="header-image"
-                            style={{ maxWidth: "100%", height: "150%" }}
                         />
                     </div>
                     <div className="button-section">
@@ -91,9 +75,9 @@ function HomePage() {
                             <button className="button-sample">Host a Server</button>
                         </div>
                         <div className="button-background">
-                            <button className="button-sample">Exit</button>
+                            <button className="button-sample">About Game</button>
                         </div>
-                        <h3 style={{ fontFamily: "Arial", fontSize: "12px" }}>
+                        <h3 style={{ fontFamily: "Poppins", fontSize: "12px" }}>
                             © 2024 Echoed Chambers. All rights reserved.
                         </h3>
                     </div>
@@ -120,7 +104,7 @@ function HomePage() {
                         </div>
                     )}
                 </div>
-            </div>
+            {/* </div> */}
         </div>
     );
 }
