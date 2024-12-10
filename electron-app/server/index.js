@@ -154,7 +154,7 @@ io.on("connection", (socket) => {
             const roles = lobby.startGame();
             if (roles) {
                 console.log(`Game started in lobby ${lobbyId} with roles: Player 1 - ${roles.player1Role}, Player 2 - ${roles.player2Role}`);
-                const gameDuration = 60; // Timer duration in seconds
+                const gameDuration = 120; // Timer duration in seconds
                 let remainingTime = gameDuration;
 
                 // Emit timer to all players
@@ -197,8 +197,8 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.on("move", ({ gameId, x, y, isWalking }) => {
-        socket.to(gameId).emit("move", { x, y, isWalking });
+    socket.on("move", ({ gameId, x, y, isWalking, isHidden }) => {
+        socket.to(gameId).emit("move", { x, y, isWalking, isHidden });
     });
 
     socket.on("moveEnd", ({ gameId }) => {

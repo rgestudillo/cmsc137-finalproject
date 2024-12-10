@@ -2,7 +2,7 @@ const fs = require('fs');
 const PNG = require('png-js');
 const IMG_WIDTH = 2880; // Updated image width
 
-PNG.decode('last1.png', function (data, err) {
+PNG.decode('mansionBounds.png', function (data, err) {
   if (err) {
     console.error('Error decoding PNG:', err);
     return;

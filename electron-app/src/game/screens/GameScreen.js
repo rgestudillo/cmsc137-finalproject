@@ -12,9 +12,11 @@ import {
     GHOST_START_Y,
     GHOST_WIDTH,
     GHOST_HEIGHT
+
 } from '../utils/constants';
 import { movePlayer } from '../utils/movement';
 import { animateMovement } from '../utils/animation';
+import {mapBounds} from '../utils/mapBounds';
 
 let player = {};
 let otherPlayer = {};
@@ -45,6 +47,7 @@ class MyGame extends Phaser.Scene {
         this.load.audio('ghostwalk', '/assets/ghostwalk.wav'); //
         this.load.audio("music", '/assets/gameMusic.wav')
         this.load.image('cabinet', '/assets/objects/Cabinet.png');
+        this.load.audio('cabinetSound', '/assets/cabinetSound.wav'); 
     }
 
     create() {
@@ -88,16 +91,24 @@ class MyGame extends Phaser.Scene {
             otherPlayer.footsteps = this.sound.add('humanwalk', { loop: true, volume: 0.5, pan: 0 });
         }
 
+        player.hideSound = this.sound.add('cabinetSound', { loop: false, volume: 0.2 });
+        otherPlayer.hideSound = this.sound.add('cabinetSound', { loop: false, volume: 0.5 });
+
         player.isWalking = false;
+  
 
         // Mask the screen black
-        this.createScreenMask();
+        // this.createScreenMask();
 
         // Clean up resources when scene shuts down
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanupScene());
 
         this.cameras.main.setZoom(3); // Zoom level (1 = default, >1 = zoom in, <1 = zoom out)
 
+    }
+
+    getRandomSpawnPosition() {
+        return 0;
     }
 
     createScreenMask() {
@@ -137,7 +148,6 @@ class MyGame extends Phaser.Scene {
         // Apply the bitmap mask to the camera
         this.cameras.main.setMask(bitmapMask);
     
-        console.log("Screen masked with a gradient circle");
     }
     
 
@@ -175,33 +185,39 @@ class MyGame extends Phaser.Scene {
         console.log("My role is: ", this.role);
 
         const ship = this.add.image(0, 0, 'ship');
-        const cabinet = this.add.image(0, 0, 'cabinet')
         // Dynamic animation keys
         const playerAnimationKey = this.role === 'player' ? 'player-running' : 'ghost-running';
         const otherPlayerAnimationKey = this.role === 'player' ? 'ghost-running' : 'player-running';
 
-        // Setup player and other player sprites
-        if (this.role === 'player') {
-            player.sprite = this.createSprite(PLAYER_START_X, PLAYER_START_Y, 'player', PLAYER_WIDTH, PLAYER_HEIGHT);
-            otherPlayer.sprite = this.createSprite(GHOST_START_X, GHOST_START_Y, 'otherPlayer', GHOST_WIDTH, GHOST_HEIGHT);
-        } else {
-            player.sprite = this.createSprite(GHOST_START_X, GHOST_START_Y, 'otherPlayer', GHOST_WIDTH, GHOST_HEIGHT);
-            otherPlayer.sprite = this.createSprite(PLAYER_START_X, PLAYER_START_Y, 'player', PLAYER_WIDTH, PLAYER_HEIGHT);
-        }
+        // Define a minimum distance apart (in pixels)
+        const minDistance = 200;
 
+        // Get two random spawn positions
+        let playerPos = this.getRandomSpawnPosition();
+        let otherPlayerPos = this.getRandomSpawnPosition();
+
+
+        // Setup player and other player sprites with these random positions
+        if (this.role === 'player') {
+            player.sprite = this.createSprite(playerPos.x, playerPos.y, 'player', PLAYER_WIDTH, PLAYER_HEIGHT);
+            otherPlayer.sprite = this.createSprite(otherPlayerPos.x, otherPlayerPos.y, 'otherPlayer', GHOST_WIDTH, GHOST_HEIGHT);
+        } else {
+            player.sprite = this.createSprite(playerPos.x, playerPos.y, 'otherPlayer', GHOST_WIDTH, GHOST_HEIGHT);
+            otherPlayer.sprite = this.createSprite(otherPlayerPos.x, otherPlayerPos.y, 'player', PLAYER_WIDTH, PLAYER_HEIGHT);
+        }
         // Create animations safely
         this.createAnimation(playerAnimationKey, player.sprite.texture.key);
         this.createAnimation(otherPlayerAnimationKey, otherPlayer.sprite.texture.key);
 
         // Input handling
         this.setupInput();
-
+        player.sprite.isHidden = false;
         // Graphics for hearing range
         this.hearingRange = this.add.graphics({ lineStyle: { width: 2, color: 0x00ff00, alpha: 1 } });
         this.hearingRange.setDepth(10);
 
         // Handle move events from the server
-        this.socket.on('move', ({ x, y, isWalking }) => this.handleMoveEvent(x, y, isWalking));
+        this.socket.on('move', ({ x, y, isWalking, isHidden }) => this.handleMoveEvent(x, y, isWalking, isHidden));
         this.socket.on('moveEnd', () => this.handleMoveEnd());
     }
 
@@ -224,34 +240,56 @@ class MyGame extends Phaser.Scene {
     }
 
     handleHiding() {
-        if (player.sprite) {
-            const dx = 0 - player.sprite.x; // Cabinet X is 0
-            const dy = 0 - player.sprite.y; // Cabinet Y is 0
+        if (!player.sprite) return;
+        
+        // Array of cabinet coordinates
+        const cabinetLocations = [
+            { x: -991, y: -580 },
+            { x: -391, y: -613 },
+
+        ];
+        
+        let playerCanHide = false;
+    
+        // Check each cabinet location
+        for (const cabinet of cabinetLocations) {
+            const dx = cabinet.x - player.sprite.x;
+            const dy = cabinet.y - player.sprite.y;
             const distanceToCabinet = Math.sqrt(dx * dx + dy * dy);
-
-            // Check if player is close enough to the cabinet
-            if (distanceToCabinet <= 50) { // 50 units proximity
-                player.sprite.isHidden = !player.sprite.isHidden; // Toggle hiding state
-
-                if (player.sprite.isHidden) {
-                    console.log("Player is hiding.");
-                    player.sprite.setVisible(false); // Hide the player visually
-                } else {
-                    console.log("Player is no longer hiding.");
-                    player.sprite.setVisible(true); // Show the player visually
-                }
+    
+            // Check if player is within 20 units of this cabinet
+            if (distanceToCabinet <= 10) {
+                playerCanHide = true;
+                break; // No need to check other cabinets once we know the player can hide
+            }
+        }
+    
+        // If player is close enough to at least one cabinet
+        if (playerCanHide) {
+            player.sprite.isHidden = !player.sprite.isHidden; // Toggle hiding state
+    
+            if (player.sprite.isHidden) {
+                player.hideSound.play();
+                player.sprite.setVisible(false);
             } else {
-                console.log("Player is too far from the cabinet to hide.");
+                player.hideSound.play();
+                player.sprite.setVisible(true);
             }
         }
     }
+    
 
 
     setupInput() {
         const gKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
-
+        
         gKey.on('down', () => {
-            this.handleHiding(); // Call the hiding function on 'G' key press
+            if(this.role == 'player'){
+                this.handleHiding(); // Call the hiding function on 'G' key press
+            }
+            else{
+                this.handleGhostAttack();
+            }
         });
 
         // Existing movement input handling
@@ -267,7 +305,7 @@ class MyGame extends Phaser.Scene {
     }
 
 
-    handleMoveEvent(x, y, isWalking) {
+    handleMoveEvent(x, y, isWalking, isHidden) {
         if (otherPlayer.sprite) {
             // console.log("is walking in movement is: ", isWalking)
             // if(isWalking){
@@ -286,6 +324,14 @@ class MyGame extends Phaser.Scene {
             otherPlayer.sprite.y = y;
             otherPlayer.moving = true;
 
+            if (isHidden) {
+                otherPlayer.hideSound.play();
+                otherPlayer.sprite.setVisible(false);
+            }else{
+                otherPlayer.hideSound.play();
+                otherPlayer.sprite.setVisible(true);
+            } 
+
             if (isWalking) {
                 if (otherPlayer.footsteps.isPlaying) {
                     otherPlayer.footsteps.stop();
@@ -293,6 +339,7 @@ class MyGame extends Phaser.Scene {
             } else if (!otherPlayer.footsteps.isPlaying) {
                 otherPlayer.footsteps.play();
             }
+
         }
     }
 
@@ -313,8 +360,9 @@ class MyGame extends Phaser.Scene {
 
     update() {
         if (player.sprite) {
-
             if (player.sprite.isHidden) {
+                this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y, isWalking: player.sprite.isWalking, isHidden: player.sprite.isHidden });
+                this.socket.emit('moveEnd', { gameId: this.gameId });
                 return; // Skip update logic if the player is hidden
             }
 
@@ -324,8 +372,9 @@ class MyGame extends Phaser.Scene {
             this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
             // Handle player movement
-            const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);;
-            // console.log("player is walking: ", player.sprite.isWalking)
+            const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);
+
+
             if (playerMoved) {
                 if (player.sprite.isWalking) {
                     if (player.footsteps.isPlaying) {
@@ -334,7 +383,8 @@ class MyGame extends Phaser.Scene {
                 } else if (!player.footsteps.isPlaying) {
                     player.footsteps.play();
                 }
-                this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y, isWalking: player.sprite.isWalking });
+
+                this.socket.emit('move', { gameId: this.gameId, x: player.sprite.x, y: player.sprite.y, isWalking: player.sprite.isWalking, isHidden: player.sprite.isHidden });
                 player.movedLastFrame = true;
                 animateMovement(pressedKeys, player.sprite, playerAnimationKey);
             } else {
@@ -347,7 +397,7 @@ class MyGame extends Phaser.Scene {
                     player.sprite.stop();
                 }
             }
-
+            console.log(`Player Coordinates - X: ${player.sprite.x}, Y: ${player.sprite.y}`);
             this.updatePlayerAudioAndVisualization();
         }
 
@@ -394,6 +444,11 @@ class MyGame extends Phaser.Scene {
             // Update the footsteps audio properties
             otherPlayer.footsteps.setVolume(volume);
             otherPlayer.footsteps.setPan(pan);
+            if(this.role == 'ghost'){
+                otherPlayer.hideSound.setVolume(volume);
+                otherPlayer.hideSound.setPan(pan);
+            }
+
         }
 
         // Call updateHearingRange to update the visual
