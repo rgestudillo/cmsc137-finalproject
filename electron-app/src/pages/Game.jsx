@@ -48,31 +48,50 @@ const Game = ({ currentActiveScene }) => {
                     alignItems: "center",
                     backgroundColor: "transparent",
                     color: "#fff",
-                    fontFamily: "'Creepster', cursive",
+                    fontFamily: "'Creepster', cursive", // Spooky font
                     padding: "1rem",
-                    border: "2px solid red",
+                    border: "2px solid red", // Red border for intensity
                     borderRadius: "10px",
-                    textShadow: "2px 2px 8px red",
+                    textShadow:
+                        "2px 2px 8px red, 0 0 25px yellow, 0 0 5px darkorange", // Eerie glow effect
                     gap: "2rem",
                     marginTop: "4rem",
+                    animation: "pulse 1.5s infinite", // Pulsing animation for the whole container
                 }}
             >
-                <p style={{ margin: 0, fontSize: "1.2rem", color: "orange" }}>
+                <p
+                    style={{
+                        margin: 0,
+                        fontSize: "1.5rem",
+                        color: "orange",
+                        animation: "blink 1s infinite",
+                    }}
+                >
                     <span>{gameId}</span>
+                </p>
+                <p
+                    style={{
+                        margin: 0,
+                        fontSize: "2rem", // Increase the font size for emphasis
+                        color: "red",
+                        textShadow: "0 0 20px red, 0 0 30px darkred", // Red glow for the timer
+                        animation: "blink 1s infinite", // Flashing effect for urgency
+                    }}
+                >
+                    <span>{currentTimer}</span>
                 </p>
                 <p
                     style={{
                         margin: 0,
                         fontSize: "1.2rem",
                         color: "limegreen",
+                        textShadow: "0 0 10px limegreen, 0 0 20px lime", // Green eerie glow
                     }}
                 >
                     <span>{role}</span>
                 </p>
-                <p style={{ margin: 0, fontSize: "1.2rem", color: "red" }}>
-                    <span>{currentTimer}</span>
-                </p>
             </div>
+
             {role && (
                 <PhaserGame
                     currentActiveScene={currentActiveScene}

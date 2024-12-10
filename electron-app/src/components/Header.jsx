@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSocket } from "../context/SocketContext"; // Import the socket context
 import { IoArrowBack, IoHome } from "react-icons/io5"; // Import home and back icons
+import { MdVolumeUp, MdVolumeOff } from "react-icons/md"; // Volume icons
 
 const Header = () => {
     const [latency, setLatency] = useState(null); // Store latency locally
+    const [isMuted, setIsMuted] = useState(false); // Track audio mute state
     const { socket, serverUrl } = useSocket();
     const navigate = useNavigate();
     const location = useLocation(); // Get current location
@@ -63,6 +65,7 @@ const Header = () => {
             label: "Leave",
         },
     };
+
     const isGameRoute = location.pathname.startsWith("/game/");
     // Get the button config based on the current path
     const getButtonConfig = () => {
@@ -86,6 +89,7 @@ const Header = () => {
                 display: "flex",
                 alignItems: "center",
                 zIndex: 1000,
+                boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)", // Light shadow for better visibility
             }}
         >
             {buttonConfig.icon && (
@@ -116,19 +120,49 @@ const Header = () => {
                     }}
                 >
                     {serverUrl || ""}
+                    <audio
+                        src="/assets/gameMusic.wav"
+                        autoPlay
+                        loop
+                        controls={false}
+                        muted={isMuted} // Mute based on the isMuted state
+                    />
                 </div>
             )}
-            <div
-                style={{
-                    color: "white",
-                    marginLeft: "auto",
-                    fontSize: "1rem",
-                    marginRight: "20px",
-                }}
-            >
-                {latency !== null ? `${latency}ms` : buttonConfig.label}{" "}
-                {/* Display latency or label */}
-            </div>
+            {!isGameRoute && (
+                <div
+                    style={{
+                        color: "white",
+                        marginLeft: "auto",
+                        fontSize: "1rem",
+                        marginRight: "20px",
+                        display: "flex",
+                        alignItems: "center",
+                    }}
+                >
+                    {latency !== null ? `${latency}ms` : buttonConfig.label}{" "}
+                    {/* Display latency or label */}
+                    {/* Mute button with icon */}
+                    <button
+                        onClick={() => setIsMuted(!isMuted)} // Toggle mute state
+                        style={{
+                            marginLeft: "10px",
+                            cursor: "pointer",
+                            background: "transparent",
+                            border: "none",
+                            color: "white",
+                            transition: "transform 0.2s", // Smooth hover animation
+                        }}
+                        title={isMuted ? "Unmute Music" : "Mute Music"} // Tooltip for better UX
+                    >
+                        {isMuted ? (
+                            <MdVolumeOff size={24} /> // Mute icon
+                        ) : (
+                            <MdVolumeUp size={24} /> // Unmute icon
+                        )}
+                    </button>
+                </div>
+            )}
         </header>
     );
 };
