@@ -46,10 +46,10 @@ const ServerConnectedPage = () => {
                 <img
                     src="/assets/eyesanimation.gif"
                     alt="Eyes Animation"
-                    style={{ width: "40%", height: "auto", marginBottom: "10px" }} // Reduced margin
+                    style={{ width: "50%", height: "auto", marginBottom: "10px" }} // Reduced margin
                 />
             </div>
-            <div className="button-section">
+            <div className="button-sectionjoin">
                 <div className="button-background create-server" onClick={handleCreateLobby}>
                     <button className="button-sample">
                         Create Lobby

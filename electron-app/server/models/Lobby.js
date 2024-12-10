@@ -13,13 +13,20 @@ class Lobby {
             this.players.push(socket);
             return true;
         }
-        return false;  // Lobby is full
+        return false; // Lobby is full
+    }
+
+    // Remove a player from the lobby
+    removePlayer(socket) {
+        this.players = this.players.filter(
+            (playerSocket) => playerSocket.id !== socket.id
+        );
     }
 
     // Start the game and assign roles to players
     startGame() {
         if (this.players.length === 2) {
-            const roles = ['ghost', 'player'];
+            const roles = ["ghost", "player"];
             const randomIndex = Math.floor(Math.random() * roles.length);
             const player1Role = roles[randomIndex];
             const player2Role = roles[1 - randomIndex];
@@ -29,17 +36,20 @@ class Lobby {
             this.startTime = new Date().toISOString();
 
             // Emit start game event with assigned roles
-            this.players[0].emit('startGame', { role: player1Role });
-            this.players[1].emit('startGame', { role: player2Role });
+            this.players[0].emit("startGame", { role: player1Role });
+            this.players[1].emit("startGame", { role: player2Role });
 
             return { player1Role, player2Role };
         }
-        return null;  // Cannot start game with less than 2 players
+        return null; // Cannot start game with less than 2 players
     }
 
-    // Check if the lobby is available (not full and not started)
+    // Check if the lobby is available (not full, not started, and sockets are active)
     isAvailable() {
-        return this.players.length > 0;
+        const allPlayersConnected = this.players.every(
+            (playerSocket) => playerSocket.connected
+        );
+        return this.players.length > 0 && allPlayersConnected;
     }
 }
 

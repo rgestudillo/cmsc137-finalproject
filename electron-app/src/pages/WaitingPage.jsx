@@ -39,16 +39,23 @@ const WaitingPage = () => {
             }, 5000);
         };
 
+        const onPlayerLeft = (data) => {
+            console.log(data.message); // Log the message (Player left)
+            onDisconnect(); // Call onDisconnect when a player leaves
+        };
+
         // Add socket event listeners
         socket.on("opponentConnected", onOpponentConnected);
         socket.on("disconnect", onDisconnect);
         socket.on("startGame", onStartGame);
+        socket.on("playerLeft", onPlayerLeft);
 
         // Clean up socket listeners on component unmount
         return () => {
             socket.off("opponentConnected", onOpponentConnected);
             socket.off("disconnect", onDisconnect);
             socket.off("startGame", onStartGame);
+            socket.off("playerLeft", onPlayerLeft);
         };
     }, [socket, isHost, navigate]);
 

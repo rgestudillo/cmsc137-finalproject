@@ -17,6 +17,8 @@ This template has been updated for:
 ## Requirements
 
 [Node.js](https://nodejs.org) is required to install dependencies and run scripts via `npm`.
+npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons
+
 
 ## Available Commands
 
