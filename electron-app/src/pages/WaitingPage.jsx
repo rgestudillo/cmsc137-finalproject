@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSocket } from "../context/SocketContext"; // Import your socket context
 import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation for accessing location state
-import "../pages/waitingpage.css";
+import "./waitingpage.css";
 
 const WaitingPage = () => {
     const { socket } = useSocket(); // Get the socket from context
@@ -25,9 +25,7 @@ const WaitingPage = () => {
         };
 
         const onDisconnect = () => {
-            setWaitingText(
-                isHost ? "..." : "Reconnecting..."
-            );
+            setWaitingText(isHost ? "..." : "Reconnecting...");
             setShowPlayButton(false);
         };
 
@@ -84,7 +82,7 @@ const WaitingPage = () => {
                 <img
                     src="/assets/WaitingforOpp.gif"
                     alt="Waiting animation"
-                    style={{ width: "100%", height: "180%", }}
+                    style={{ width: "100%", height: "180%" }}
                 />
             </div>
             <div
@@ -113,7 +111,10 @@ const WaitingPage = () => {
             </div>
             {/* Play Button */}
             {showPlayButton ? (
-                <div className="play-background" onClick={handlePlayButtonClick}>
+                <div
+                    className="play-background"
+                    onClick={handlePlayButtonClick}
+                >
                     <button className="play-button">Enter Chambers</button>
                 </div>
             ) : (
@@ -146,21 +147,20 @@ const WaitingPage = () => {
                 >
                     {/* Conditional Modal Content Based on Role */}
                     {role === "player" && (
-                            <img
-                                src="/assets/human-role.gif" // Replace with your survivor GIF or image
-                                alt="Survivor"
-                            />
+                        <img
+                            src="/assets/human-role.gif" // Replace with your survivor GIF or image
+                            alt="Survivor"
+                        />
                     )}
                     {role === "ghost" && (
-                            <img
-                                src="/assets/ghost-role.gif" // Replace with your ghost GIF or image
-                                alt="Ghost"
-                            />
+                        <img
+                            src="/assets/ghost-role.gif" // Replace with your ghost GIF or image
+                            alt="Ghost"
+                        />
                     )}
-                    
                 </div> //div above if-else
             )}
-        </div> //main div 
+        </div> //main div
     );
 };
 

@@ -2,7 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketContext";
-import "../pages/serverconnected.css";
+import "./serverconnected.css";
 
 const ServerConnectedPage = () => {
     const { socket, serverUrl } = useSocket();
@@ -46,23 +46,28 @@ const ServerConnectedPage = () => {
                 <img
                     src="/assets/eyesanimation.gif"
                     alt="Eyes Animation"
-                    style={{ width: "50%", height: "auto", marginBottom: "10px" }} // Reduced margin
+                    style={{
+                        width: "50%",
+                        height: "auto",
+                        marginBottom: "10px",
+                    }} // Reduced margin
                 />
             </div>
             <div className="button-sectionjoin">
-                <div className="button-background create-server" onClick={handleCreateLobby}>
-                    <button className="button-sample">
-                        Create Lobby
-                    </button>
+                <div
+                    className="button-background create-server"
+                    onClick={handleCreateLobby}
+                >
+                    <button className="button-sample">Create Lobby</button>
                 </div>
-                <div className="button-background connect-server" onClick={handleJoinLobby}>
-                    <button className="button-sample">
-                        Join Lobby
-                    </button>
+                <div
+                    className="button-background connect-server"
+                    onClick={handleJoinLobby}
+                >
+                    <button className="button-sample">Join Lobby</button>
                 </div>
             </div>
         </div>
-
     );
 };
 

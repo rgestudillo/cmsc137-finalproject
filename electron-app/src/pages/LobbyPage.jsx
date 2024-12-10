@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketContext";
 import LobbyItem from "../components/LobbyItem";
-import "../pages/serverconnected.css";
+import "./serverconnected.css";
 
 const LobbyPage = () => {
     const navigate = useNavigate();
@@ -176,7 +176,10 @@ const LobbyPage = () => {
                 )}
             </div>
             <div className="button-background connect-server">
-                <button className="button-sample" onClick={() => navigate("/server-connected")}>
+                <button
+                    className="button-sample"
+                    onClick={() => navigate("/server-connected")}
+                >
                     Back to Main
                 </button>
             </div>

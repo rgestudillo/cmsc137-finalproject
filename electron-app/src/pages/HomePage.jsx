@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketContext";
-import "../pages/homepage.css";
+import "./homepage.css";
 
 function HomePage() {
     const navigate = useNavigate();
