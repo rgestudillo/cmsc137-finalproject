@@ -373,9 +373,11 @@ class MyGame extends Phaser.Scene {
             }
 
             if (isHidden == true) {
-                otherPlayer.hideSound.play();
+                if (otherPlayerisHidingFlag == false) {
+                    otherPlayer.hideSound.play();
+                    otherPlayerisHidingFlag = true;
+                }
                 otherPlayer.sprite.setVisible(false);
-                otherPlayerisHidingFlag = true;
             } else if (isHidden == false) {
                 if (otherPlayerisHidingFlag == true) {
                     otherPlayer.hideSound.play();
