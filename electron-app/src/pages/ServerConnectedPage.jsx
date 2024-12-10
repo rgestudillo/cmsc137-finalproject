@@ -31,7 +31,7 @@ const ServerConnectedPage = () => {
                 fontFamily: "'Press Start 2P', cursive",
                 textAlign: "center",
                 color: "#ffffff",
-                backgroundImage: "url('/assets/host-create.png')", // Replace with your image URL
+                backgroundImage: "url('./assets/host-create.png')", // Replace with your image URL
                 backgroundSize: "cover", // Makes sure the image covers the entire div
                 backgroundPosition: "center", // Centers the image
                 width: "100vw", // Changed from 100vh to 100vw for full width

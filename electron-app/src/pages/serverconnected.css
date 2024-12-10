@@ -66,21 +66,21 @@
 
 /* Button 1 background image */
 .button-background.create-server {
-    background-image: url("/assets/create-server.png");
+    background-image: url("./assets/create-server.png");
     transition: transform 0.3s ease, opacity 0.3s ease; 
     opacity: 0.8; 
     cursor: pointer;
 }
 
 .button-background.create-server:hover {
-    background-image: url("/assets/create-server-host.png");
+    background-image: url("./assets/create-server-host.png");
     opacity: 1; 
     transform: scale(0.9); 
 }
 
 /* Button 2 background image */
 .button-background.connect-server {
-    background-image: url("/assets/join-server.png");
+    background-image: url("./assets/join-server.png");
     transition: transform 0.3s ease, opacity 0.3s ease; 
     opacity: 0.8; 
     cursor: pointer;
@@ -88,7 +88,7 @@
 
 /* Hover effect to change the background image */
 .button-background.connect-server:hover {
-    background-image: url('/assets/join-server-hover.png');
+    background-image: url('./assets/join-server-hover.png');
     opacity: 1; 
     transform: scale(0.9); 
 }

@@ -2,7 +2,7 @@
 
 .play-background {
     margin-top: 2%;
-    background-image: url("../../public/assets/play-button.png");
+    background-image: url("./assets/play-button.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
