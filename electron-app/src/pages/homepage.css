@@ -21,7 +21,7 @@ body{
     min-height: 100vh;
     display: grid; 
     place-items: center;
-    background-image: url('/assets/test.png');
+    background-image: url('./assets/test.png');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -89,7 +89,7 @@ body{
 }
 
 .button-background {
-    background-image: url("/assets/home-screen-button.png");
+    background-image: url("./assets/home-screen-button.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -106,7 +106,7 @@ body{
 
 /* Hover effect to change the background image */
 .button-background:hover {
-    background-image: url('/assets/home-screen-button-hover.png');
+    background-image: url('./assets/home-screen-button-hover.png');
     opacity: 1; 
     transform: scale(0.9); 
 }
