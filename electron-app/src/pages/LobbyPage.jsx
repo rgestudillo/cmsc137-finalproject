@@ -94,7 +94,15 @@ const LobbyPage = () => {
                     }}
                 />
             </div>
-
+            <p
+                style={{
+                    fontFamily: "'Poppins', sans-serif",
+                    fontSize: "20px",
+                    marginTop: "30px",
+                }}
+            >
+                All players are waiting to start the game.
+            </p>
             {errorMessage && (
                 <p
                     style={{
@@ -109,14 +117,13 @@ const LobbyPage = () => {
 
             <h2
                 style={{
-                    fontFamily: "Arial, Helvetica, sans-serif",
+                    fontFamily: "'Poppins', sans-serif",
                     fontSize: "24px",
                     marginBottom: "20px",
                 }}
             >
                 Available Lobbies
             </h2>
-
             {/* Search input */}
             <input
                 type="text"
