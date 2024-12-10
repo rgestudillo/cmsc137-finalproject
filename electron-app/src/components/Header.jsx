@@ -63,7 +63,7 @@ const Header = () => {
             label: "Leave",
         },
     };
-
+    const isGameRoute = location.pathname.startsWith("/game/");
     // Get the button config based on the current path
     const getButtonConfig = () => {
         const path = location.pathname;
@@ -106,17 +106,18 @@ const Header = () => {
                     {buttonConfig.icon} {/* Icon */}
                 </button>
             )}
-            <div
-                style={{
-                    color: "white",
-                    fontSize: "1rem",
-                    textAlign: "center",
-                    flex: 1, // Occupy the central space
-                }}
-            >
-                {serverUrl || ""}
-            </div>
-
+            {!isGameRoute && (
+                <div
+                    style={{
+                        color: "white",
+                        fontSize: "1rem",
+                        textAlign: "center",
+                        flex: 1, // Occupy the central space
+                    }}
+                >
+                    {serverUrl || ""}
+                </div>
+            )}
             <div
                 style={{
                     color: "white",
