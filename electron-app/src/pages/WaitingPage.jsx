@@ -73,10 +73,29 @@ const WaitingPage = () => {
             }}
         >
             <div>
-                <img src="/assets/WaitingforOpp.gif" alt="Waiting animation" style={{ width: "100%", height: "180%" }} />
+                <img
+                    src="/assets/WaitingforOpp.gif"
+                    alt="Waiting animation"
+                    style={{ width: "100%", height: "180%" }}
+                />
             </div>
-            <div style={{ marginLeft: "20px", marginRight: "20px", fontSize: "24px", color: "#fff" }}>
-                <p style={{ marginTop: "100px", fontSize: "24px", color: "#fff" }}>...</p>
+            <div
+                style={{
+                    marginLeft: "20px",
+                    marginRight: "20px",
+                    fontSize: "24px",
+                    color: "#fff",
+                }}
+            >
+                <p
+                    style={{
+                        marginTop: "100px",
+                        fontSize: "24px",
+                        color: "#fff",
+                    }}
+                >
+                    ...
+                </p>
             </div>
             <div style={{ backgroundColor: "#938289", width: "100%" }}>
                 {/* Display Lobby ID */}
@@ -85,7 +104,7 @@ const WaitingPage = () => {
                 </p>
             </div>
             {/* Play Button */}
-            {showPlayButton && !playButtonClicked ? (
+            {showPlayButton ? (
                 <button
                     style={{
                         fontSize: "32px",
@@ -101,7 +120,11 @@ const WaitingPage = () => {
                 </button>
             ) : (
                 <div>
-                    <img src="/assets/HostileAttackReaper.gif" alt="Your Gif" style={{ width: "100%", height: "200%" }} />
+                    <img
+                        src="/assets/HostileAttackReaper.gif"
+                        alt="Your Gif"
+                        style={{ width: "100%", height: "200%" }}
+                    />
                 </div>
             )}
 

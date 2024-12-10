@@ -74,8 +74,21 @@ function HomePage() {
                         <div className="button-background" onClick={handleCreateServer}>
                             <button className="button-sample">Host a Server</button>
                         </div>
+<<<<<<< HEAD
                         <div className="button-background">
                             <button className="button-sample">About Game</button>
+=======
+                        <div
+                            className="button-background"
+                            onClick={() => {
+                                setServerUrl(
+                                    "https://server.echoed-chambers.online"
+                                );
+                                navigate("/server-connected");
+                            }}
+                        >
+                            <button className="button-sample">Online</button>
+>>>>>>> edc87dc6f7c35df54f71a30b482052c562410cc4
                         </div>
                         <h3 style={{ fontFamily: "Poppins", fontSize: "12px" }}>
                             © 2024 Echoed Chambers. All rights reserved.

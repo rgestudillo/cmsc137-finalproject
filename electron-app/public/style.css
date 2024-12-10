@@ -23,6 +23,11 @@ body {
     align-items: center;
 }
 
+#game-container {
+    width: 100vw;
+    height: 100vh;
+  }
+
 .spritePosition {
     margin: 10px 0 0 10px;
     font-size: 0.8em;
