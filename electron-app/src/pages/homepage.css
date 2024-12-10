@@ -99,12 +99,16 @@ body{
     align-items: center;
     width: 468px !important; 
     transform: scale(0.8);
-    transition: background-image 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease; 
+    opacity: 0.8; 
+    cursor: pointer;
 }
 
 /* Hover effect to change the background image */
 .button-background:hover {
     background-image: url('/assets/home-screen-button-hover.png');
+    opacity: 1; 
+    transform: scale(0.9); 
 }
 
 .button-background-image {

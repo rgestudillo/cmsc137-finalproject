@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSocket } from "../context/SocketContext"; // Import your socket context
 import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation for accessing location state
+import "../pages/waitingpage.css";
 
 const WaitingPage = () => {
     const { socket } = useSocket(); // Get the socket from context
@@ -83,7 +84,7 @@ const WaitingPage = () => {
                 <img
                     src="/assets/WaitingforOpp.gif"
                     alt="Waiting animation"
-                    style={{ width: "100%", height: "180%" }}
+                    style={{ width: "100%", height: "180%", marginTop: "8%,"}}
                 />
             </div>
             <div
@@ -106,25 +107,31 @@ const WaitingPage = () => {
             </div>
             <div style={{ backgroundColor: "#938289", width: "100%" }}>
                 {/* Display Lobby ID */}
-                <p style={{ fontSize: "20px", color: "#4caf50" }}>
+                <p style={{ fontSize: "20px", color: "#1eff27" }}>
                     Lobby ID: {lobbyId}
                 </p>
             </div>
             {/* Play Button */}
             {showPlayButton ? (
-                <button
-                    style={{
-                        fontSize: "32px",
-                        color: "#0f0",
-                        backgroundColor: "transparent",
-                        border: "none",
-                        cursor: "pointer",
-                        marginTop: "20px",
-                    }}
-                    onClick={handlePlayButtonClick}
-                >
-                    Play
-                </button>
+                // <button
+                //     style={{
+                //         fontSize: "32px",
+                //         color: "#0f0",
+                //         backgroundColor: "transparent",
+                //         border: "none",
+                //         cursor: "pointer",
+                //         marginTop: "20px",
+                //     }}
+                //     onClick={handlePlayButtonClick}
+                // >
+                //     Play
+                // </button>
+
+                    <div className="play-background" onClick={handlePlayButtonClick}>
+                        <button className="play-button">
+                            Enter Chambers 
+                        </button>
+                    </div>
             ) : (
                 <div>
                     <img
