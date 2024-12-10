@@ -10,7 +10,7 @@ const WaitingPage = () => {
 
     const { isHost, lobbyId } = location.state || {}; // Ensure state exists to prevent errors
     const [waitingText, setWaitingText] = useState(
-        isHost ? "Waiting for opponent to join..." : "Joining lobby..."
+        isHost ? "..." : "Joining lobby..."
     );
     const [showPlayButton, setShowPlayButton] = useState(false);
     const [role, setRole] = useState(""); // To store the assigned role
@@ -26,7 +26,7 @@ const WaitingPage = () => {
 
         const onDisconnect = () => {
             setWaitingText(
-                isHost ? "Waiting for opponent to join..." : "Reconnecting..."
+                isHost ? "..." : "Reconnecting..."
             );
             setShowPlayButton(false);
         };
@@ -35,9 +35,9 @@ const WaitingPage = () => {
             setRole(role); // Set the role received from the server
             setShowModal(true); // Show the modal
             setTimeout(() => {
-                setShowModal(false); // Hide the modal after 5 seconds
+                setShowModal(false); // Hide the modal after 7 seconds
                 navigate(`/game/${lobbyId}`, { state: { role } }); // Navigate to the game page with role
-            }, 5000);
+            }, 7000);
         };
 
         const onPlayerLeft = (data) => {
@@ -84,7 +84,7 @@ const WaitingPage = () => {
                 <img
                     src="/assets/WaitingforOpp.gif"
                     alt="Waiting animation"
-                    style={{ width: "100%", height: "180%", marginTop: "8%,"}}
+                    style={{ width: "100%", height: "180%", }}
                 />
             </div>
             <div
@@ -102,7 +102,7 @@ const WaitingPage = () => {
                         color: "#fff",
                     }}
                 >
-                    ...
+                    {waitingText}
                 </p>
             </div>
             <div style={{ backgroundColor: "#938289", width: "100%" }}>
@@ -113,25 +113,9 @@ const WaitingPage = () => {
             </div>
             {/* Play Button */}
             {showPlayButton ? (
-                // <button
-                //     style={{
-                //         fontSize: "32px",
-                //         color: "#0f0",
-                //         backgroundColor: "transparent",
-                //         border: "none",
-                //         cursor: "pointer",
-                //         marginTop: "20px",
-                //     }}
-                //     onClick={handlePlayButtonClick}
-                // >
-                //     Play
-                // </button>
-
-                    <div className="play-background" onClick={handlePlayButtonClick}>
-                        <button className="play-button">
-                            Enter Chambers 
-                        </button>
-                    </div>
+                <div className="play-background" onClick={handlePlayButtonClick}>
+                    <button className="play-button">Enter Chambers</button>
+                </div>
             ) : (
                 <div>
                     <img
@@ -151,7 +135,7 @@ const WaitingPage = () => {
                         left: 0,
                         width: "100%",
                         height: "100%",
-                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        backgroundColor: "rgba(0, 0, 0, 1)",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -160,13 +144,23 @@ const WaitingPage = () => {
                         zIndex: 1000,
                     }}
                 >
-                    <h2 style={{ fontSize: "36px" }}>Your role is:</h2>
-                    <p style={{ fontSize: "48px", marginTop: "20px" }}>
-                        {role}
-                    </p>
-                </div>
+                    {/* Conditional Modal Content Based on Role */}
+                    {role === "player" && (
+                            <img
+                                src="/assets/human-role.gif" // Replace with your survivor GIF or image
+                                alt="Survivor"
+                            />
+                    )}
+                    {role === "ghost" && (
+                            <img
+                                src="/assets/ghost-role.gif" // Replace with your ghost GIF or image
+                                alt="Ghost"
+                            />
+                    )}
+                    
+                </div> //div above if-else
             )}
-        </div>
+        </div> //main div 
     );
 };
 

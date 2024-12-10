@@ -33,21 +33,9 @@ function App() {
 function AppContent({ currentScene }) {
     const location = useLocation();
 
-    // Check if the current route matches the game route pattern
-    const isGameRoute = location.pathname.startsWith("/game/");
-
     return (
         <div id="app">
             <Header />
-            {/* Only render the audio if we're not on a game route */}
-            {!isGameRoute && (
-                <audio
-                    src="/assets/gameMusic.wav"
-                    autoPlay
-                    loop
-                    controls={false}
-                />
-            )}
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route
