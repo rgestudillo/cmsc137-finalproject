@@ -85,20 +85,21 @@ class MyGame extends Phaser.Scene {
         if (this.role === 'player') {
             player.footsteps = this.sound.add('humanwalk', { loop: true, volume: 0.2 });
             otherPlayer.footsteps = this.sound.add('ghostwalk', { loop: true, volume: 0.5, pan: 0 });
+            player.hideSound = this.sound.add('cabinetSound', { loop: false, volume: 0.2 });
+
         }
         else {
             player.footsteps = this.sound.add('ghostwalk', { loop: true, volume: 0.2 });
             otherPlayer.footsteps = this.sound.add('humanwalk', { loop: true, volume: 0.5, pan: 0 });
+            otherPlayer.hideSound = this.sound.add('cabinetSound', { loop: false, volume: 0.5 });
         }
 
-        player.hideSound = this.sound.add('cabinetSound', { loop: false, volume: 0.2 });
-        otherPlayer.hideSound = this.sound.add('cabinetSound', { loop: false, volume: 0.5 });
 
         player.isWalking = false;
   
 
         // Mask the screen black
-        // this.createScreenMask();
+        this.createScreenMask();
 
         // Clean up resources when scene shuts down
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanupScene());
