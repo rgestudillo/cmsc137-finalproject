@@ -277,6 +277,14 @@ class MyGame extends Phaser.Scene {
                 player.sprite.setVisible(true);
             }
         }
+
+        if (isHidden) {
+            otherPlayer.hideSound.play();
+            otherPlayer.sprite.setVisible(false);
+        }else{
+            otherPlayer.hideSound.play();
+            otherPlayer.sprite.setVisible(true);
+        } 
     }
     
 
@@ -324,14 +332,6 @@ class MyGame extends Phaser.Scene {
             otherPlayer.sprite.x = x;
             otherPlayer.sprite.y = y;
             otherPlayer.moving = true;
-
-            if (isHidden) {
-                otherPlayer.hideSound.play();
-                otherPlayer.sprite.setVisible(false);
-            }else{
-                otherPlayer.hideSound.play();
-                otherPlayer.sprite.setVisible(true);
-            } 
 
             if (isWalking) {
                 if (otherPlayer.footsteps.isPlaying) {
