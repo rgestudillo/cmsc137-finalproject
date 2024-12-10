@@ -38,6 +38,8 @@ const spawnPositions = {
 };
 
 
+var otherPlayerisHidingFlag = false;
+
 class MyGame extends Phaser.Scene {
     constructor({ socket, role, navigateCallback }) {
         super("MyGame");
@@ -62,7 +64,6 @@ class MyGame extends Phaser.Scene {
         });
         this.load.audio('humanwalk', '/assets/walk.wav'); //
         this.load.audio('ghostwalk', '/assets/ghostwalk.wav'); //
-        this.load.audio("music", '/assets/gameMusic.wav')
         this.load.audio('cabinetSound', '/assets/cabinetSound.wav');
     }
 
@@ -76,18 +77,6 @@ class MyGame extends Phaser.Scene {
 
         // Emit joinLobby event with gameId
         this.socket.emit('joinLobby', this.gameId);
-        this.music = this.sound.add("music")
-        var musicConfig = {
-            mute: false,
-            volume: 0.2,
-            rate: 1,
-            detune: 0,
-            seek: 0,
-            loop: true,
-            delay: 0
-        }
-        this.music.play(musicConfig)
-
         // Remove existing listeners to prevent duplication
         this.cleanupSocketListeners();
 
@@ -327,14 +316,6 @@ class MyGame extends Phaser.Scene {
                 player.sprite.setVisible(true);
             }
         }
-
-        if (isHidden) {
-            otherPlayer.hideSound.play();
-            otherPlayer.sprite.setVisible(false);
-        } else {
-            otherPlayer.hideSound.play();
-            otherPlayer.sprite.setVisible(true);
-        }
     }
 
 
@@ -391,6 +372,17 @@ class MyGame extends Phaser.Scene {
                 otherPlayer.footsteps.play();
             }
 
+            if (isHidden == true) {
+                otherPlayer.hideSound.play();
+                otherPlayer.sprite.setVisible(false);
+                otherPlayerisHidingFlag = true;
+            } else if (isHidden == false) {
+                if (otherPlayerisHidingFlag == true) {
+                    otherPlayer.hideSound.play();
+                    otherPlayerisHidingFlag = false;
+                }
+                otherPlayer.sprite.setVisible(true);
+            }
         }
     }
 
