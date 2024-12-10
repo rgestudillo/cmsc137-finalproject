@@ -46,6 +46,7 @@
     gap: 5px;
     transform: scale(1.2);
     margin-top: 30px;
+    
 }
 
 .button-background {
@@ -58,27 +59,38 @@
     align-items: center;
     width: 70%;
     height: 50px;
-    transition: background-image 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease; 
+    opacity: 0.8; 
+    cursor: pointer;
 }
 
 /* Button 1 background image */
 .button-background.create-server {
     background-image: url("/assets/create-server.png");
+    transition: transform 0.3s ease, opacity 0.3s ease; 
+    opacity: 0.8; 
+    cursor: pointer;
 }
 
 .button-background.create-server:hover {
     background-image: url("/assets/create-server-host.png");
+    opacity: 1; 
+    transform: scale(0.9); 
 }
 
 /* Button 2 background image */
 .button-background.connect-server {
     background-image: url("/assets/join-server.png");
+    transition: transform 0.3s ease, opacity 0.3s ease; 
+    opacity: 0.8; 
+    cursor: pointer;
 }
 
 /* Hover effect to change the background image */
 .button-background.connect-server:hover {
     background-image: url('/assets/join-server-hover.png');
-    /* Image on hover */
+    opacity: 1; 
+    transform: scale(0.9); 
 }
 
 .button-background-image {
