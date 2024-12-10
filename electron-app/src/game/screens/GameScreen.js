@@ -44,6 +44,7 @@ class MyGame extends Phaser.Scene {
         this.load.audio('humanwalk', '/assets/walk.wav'); //
         this.load.audio('ghostwalk', '/assets/ghostwalk.wav'); //
         this.load.audio("music", '/assets/gameMusic.wav')
+        this.load.image('cabinet', '/assets/objects/Cabinet.png');
     }
 
     create() {
@@ -100,26 +101,45 @@ class MyGame extends Phaser.Scene {
     }
 
     createScreenMask() {
-        // Create a graphics object for the mask
-        this.blackMaskGraphics = this.make.graphics({
-            fillStyle: { color: 0x000000 }, // Black fill
-        }, false);
-
-        // Fill the mask graphics with a black circle
-        const centerX = this.cameras.main.width / 2;  // Center of the screen
-        const centerY = this.cameras.main.height / 2; // Center of the screen
-        const radius = 300; // Radius of the circle
-
-        this.blackMaskGraphics.fillCircle(centerX, centerY, radius);
-
-        // Create the mask from the graphics object
-        this.blackMask = this.blackMaskGraphics.createGeometryMask();
-
-        // Apply the mask to the camera
-        this.cameras.main.setMask(this.blackMask);
-
-        console.log("Screen masked with a circle");
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = 350; // Adjust as needed
+    
+        // Create a canvas texture
+        const gradientTextureKey = 'gradientMask';
+        const gradientTexture = this.textures.createCanvas(gradientTextureKey, width, height);
+        const ctx = gradientTexture.getContext();
+    
+        // Create a radial gradient
+        // The first circle (0 radius) is at the center and the second circle (radius) is at the fade-out boundary
+        const radialGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+    
+        // White (fully opaque) at the center, transparent at the edges.
+        // White areas will reveal the camera, transparent areas will hide it.
+        radialGradient.addColorStop(0, 'rgba(255,255,255,1)');
+        radialGradient.addColorStop(1, 'rgba(255,255,255,0)');
+    
+        // Fill the canvas with the gradient
+        ctx.fillStyle = radialGradient;
+        ctx.fillRect(0, 0, width, height);
+    
+        // Refresh the texture so Phaser can use it
+        gradientTexture.refresh();
+    
+        // Create a sprite using the gradient texture
+        const gradientSprite = this.add.image(0, 0, gradientTextureKey).setOrigin(0);
+    
+        // Create a bitmap mask from the gradient sprite
+        const bitmapMask = gradientSprite.createBitmapMask();
+    
+        // Apply the bitmap mask to the camera
+        this.cameras.main.setMask(bitmapMask);
+    
+        console.log("Screen masked with a gradient circle");
     }
+    
 
 
     cleanupSocketListeners() {
@@ -155,7 +175,7 @@ class MyGame extends Phaser.Scene {
         console.log("My role is: ", this.role);
 
         const ship = this.add.image(0, 0, 'ship');
-
+        const cabinet = this.add.image(0, 0, 'cabinet')
         // Dynamic animation keys
         const playerAnimationKey = this.role === 'player' ? 'player-running' : 'ghost-running';
         const otherPlayerAnimationKey = this.role === 'player' ? 'ghost-running' : 'player-running';
@@ -203,7 +223,38 @@ class MyGame extends Phaser.Scene {
         }
     }
 
+    handleHiding() {
+        if (player.sprite) {
+            const dx = 0 - player.sprite.x; // Cabinet X is 0
+            const dy = 0 - player.sprite.y; // Cabinet Y is 0
+            const distanceToCabinet = Math.sqrt(dx * dx + dy * dy);
+
+            // Check if player is close enough to the cabinet
+            if (distanceToCabinet <= 50) { // 50 units proximity
+                player.sprite.isHidden = !player.sprite.isHidden; // Toggle hiding state
+
+                if (player.sprite.isHidden) {
+                    console.log("Player is hiding.");
+                    player.sprite.setVisible(false); // Hide the player visually
+                } else {
+                    console.log("Player is no longer hiding.");
+                    player.sprite.setVisible(true); // Show the player visually
+                }
+            } else {
+                console.log("Player is too far from the cabinet to hide.");
+            }
+        }
+    }
+
+
     setupInput() {
+        const gKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
+
+        gKey.on('down', () => {
+            this.handleHiding(); // Call the hiding function on 'G' key press
+        });
+
+        // Existing movement input handling
         this.input.keyboard.on('keydown', (e) => {
             if (!pressedKeys.includes(e.code)) {
                 pressedKeys.push(e.code);
@@ -214,6 +265,7 @@ class MyGame extends Phaser.Scene {
             pressedKeys = pressedKeys.filter((key) => key !== e.code);
         });
     }
+
 
     handleMoveEvent(x, y, isWalking) {
         if (otherPlayer.sprite) {
@@ -233,8 +285,6 @@ class MyGame extends Phaser.Scene {
             otherPlayer.sprite.x = x;
             otherPlayer.sprite.y = y;
             otherPlayer.moving = true;
-
-
 
             if (isWalking) {
                 if (otherPlayer.footsteps.isPlaying) {
@@ -263,14 +313,16 @@ class MyGame extends Phaser.Scene {
 
     update() {
         if (player.sprite) {
+
+            if (player.sprite.isHidden) {
+                return; // Skip update logic if the player is hidden
+            }
+
             const playerAnimationKey = this.role === 'player' ? 'player-running' : 'ghost-running';
 
             // Center camera on player
             this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
 
-
-            // Update fog of war mask
-            this.updateFogOfWar(player.sprite.x, player.sprite.y);
             // Handle player movement
             const playerMoved = movePlayer(pressedKeys, player.sprite, this.role);;
             // console.log("player is walking: ", player.sprite.isWalking)
@@ -342,13 +394,6 @@ class MyGame extends Phaser.Scene {
             // Update the footsteps audio properties
             otherPlayer.footsteps.setVolume(volume);
             otherPlayer.footsteps.setPan(pan);
-
-            // Play or stop footsteps based on movement
-            // if (otherPlayer.moving && !otherPlayer.footsteps.isPlaying) {
-            //     otherPlayer.footsteps.play();
-            // } else if (!otherPlayer.moving && otherPlayer.footsteps.isPlaying) {
-            //     otherPlayer.footsteps.stop();
-            // }
         }
 
         // Call updateHearingRange to update the visual
@@ -364,13 +409,6 @@ class MyGame extends Phaser.Scene {
             if (distance <= 20) {
                 this.socket.emit('gameOver', { gameId: this.gameId });
             }
-        }
-    }
-
-    updateFogOfWar(playerX, playerY) {
-        if (this.fogMaskGraphics) {
-            this.fogMaskGraphics.clear();
-            this.fogMaskGraphics.fillCircle(playerX, playerY, 100); // 100 radius visibility
         }
     }
 }

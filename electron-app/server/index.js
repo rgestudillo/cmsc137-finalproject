@@ -148,18 +148,36 @@ io.on("connection", (socket) => {
         socket.emit("availableLobbies", availableLobbies); // Send back the detailed lobby info
     });
 
-    // Start the game in a lobby
     socket.on("startGame", (lobbyId) => {
         const lobby = lobbies[lobbyId];
         if (lobby && lobby.players.length === 2) {
             const roles = lobby.startGame();
             if (roles) {
-                console.log(
-                    `Game started in lobby ${lobbyId} with roles: Player 1 - ${roles.player1Role}, Player 2 - ${roles.player2Role}`
-                );
+                console.log(`Game started in lobby ${lobbyId} with roles: Player 1 - ${roles.player1Role}, Player 2 - ${roles.player2Role}`);
+                const gameDuration = 60; // Timer duration in seconds
+                let remainingTime = gameDuration;
+
+                // Emit timer to all players
+                io.to(lobbyId).emit("timerUpdate", remainingTime);
+
+                // Countdown logic
+                const interval = setInterval(() => {
+                    if (remainingTime > 0) {
+                        remainingTime--;
+                        io.to(lobbyId).emit("timerUpdate", remainingTime);
+                    } else {
+                        clearInterval(interval);
+                        io.to(lobbyId).emit("gameOver");
+                        console.log(`Game over in lobby ${lobbyId}`);
+                    }
+                }, 1000);
             }
+        } else {
+            socket.emit("error", { message: "Cannot start game. Not enough players or lobby not found." });
         }
     });
+
+
 
     // Handle player disconnect
     socket.on("disconnect", () => {
