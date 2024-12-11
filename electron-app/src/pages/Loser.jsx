@@ -52,8 +52,7 @@ const styles = {
         backgroundImage: "url('/assets/gameover/lose-screen.gif')",
         backgroundSize: "cover", // Make sure the GIF covers the entire background
         backgroundPosition: "center", // Center the GIF
-        opacity: 0.8, // Optional: makes the GIF slightly transparent to let the overlay show
-        zIndex: -1, // Ensure it's behind the content
+        zIndex: 1, // Ensure it's behind the content
     },
     overlay: {
         position: "absolute",
