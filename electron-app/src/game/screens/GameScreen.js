@@ -402,6 +402,9 @@ class MyGame extends Phaser.Scene {
         // Call navigateCallback to navigate to the WinnerPage React component
         if (this.navigateCallback) {
 
+            console.log("winner is: ", winner);
+            console.log("role is: ", this.role);
+
             if (this.role == winner) {
                 this.navigateCallback("/winner");
             } else {

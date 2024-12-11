@@ -167,7 +167,7 @@ io.on("connection", (socket) => {
                         io.to(lobbyId).emit("timerUpdate", remainingTime);
                     } else {
                         clearInterval(interval);
-                        io.to(lobbyId).emit("gameOver", { gameId: lobbyId, winner: 'ghost' });
+                        io.to(lobbyId).emit("gameOver", { gameId: lobbyId, winner: 'player' });
                         console.log(`Game over in lobby ${lobbyId}`);
                     }
                 }, 1000);
