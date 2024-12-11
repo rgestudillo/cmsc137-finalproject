@@ -129,40 +129,37 @@ const Header = () => {
                     />
                 </div>
             )}
-            {!isGameRoute && (
-                <div
+
+            <div
+                style={{
+                    color: "white",
+                    marginLeft: "auto",
+                    fontSize: "1rem",
+                    marginRight: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                }}
+            >
+                <button
+                    onClick={() => setIsMuted(!isMuted)} // Toggle mute state
                     style={{
+                        marginLeft: "10px",
+                        cursor: "pointer",
+                        background: "transparent",
+                        border: "none",
                         color: "white",
-                        marginLeft: "auto",
-                        fontSize: "1rem",
-                        marginRight: "20px",
-                        display: "flex",
-                        alignItems: "center",
+                        transition: "transform 0.2s", // Smooth hover animation
                     }}
+                    title={isMuted ? "Unmute Music" : "Mute Music"} // Tooltip for better UX
                 >
-                    {latency !== null ? `${latency}ms` : buttonConfig.label}{" "}
-                    {/* Display latency or label */}
-                    {/* Mute button with icon */}
-                    <button
-                        onClick={() => setIsMuted(!isMuted)} // Toggle mute state
-                        style={{
-                            marginLeft: "10px",
-                            cursor: "pointer",
-                            background: "transparent",
-                            border: "none",
-                            color: "white",
-                            transition: "transform 0.2s", // Smooth hover animation
-                        }}
-                        title={isMuted ? "Unmute Music" : "Mute Music"} // Tooltip for better UX
-                    >
-                        {isMuted ? (
-                            <MdVolumeOff size={24} /> // Mute icon
-                        ) : (
-                            <MdVolumeUp size={24} /> // Unmute icon
-                        )}
-                    </button>
-                </div>
-            )}
+                    {isMuted ? (
+                        <MdVolumeOff size={24} /> // Mute icon
+                    ) : (
+                        <MdVolumeUp size={24} /> // Unmute icon
+                    )}
+                </button>
+                {latency !== null ? `${latency}ms` : buttonConfig.label}{" "}
+            </div>
         </header>
     );
 };
