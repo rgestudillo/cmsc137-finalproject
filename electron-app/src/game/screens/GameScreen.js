@@ -20,7 +20,7 @@ import { animateMovement } from '../utils/animation';
 let player = {};
 let otherPlayer = {};
 let pressedKeys = [];
-const maxHearingRange = 500;
+const maxHearingRange = 700;
 
 const spawnPositions = {
     ghost: [
@@ -88,15 +88,15 @@ class MyGame extends Phaser.Scene {
 
         // Add sound effects
         if (this.role === 'player') {
-            player.footsteps = this.sound.add('humanwalk', { loop: true, volume: 0.2 });
-            otherPlayer.footsteps = this.sound.add('ghostwalk', { loop: true, volume: 0.5, pan: 0 });
-            player.hideSound = this.sound.add('cabinetSound', { loop: false, volume: 0.2 });
+            player.footsteps = this.sound.add('humanwalk', { loop: true, volume: 0.5 });
+            otherPlayer.footsteps = this.sound.add('ghostwalk', { loop: true, volume: 1, pan: 0 });
+            player.hideSound = this.sound.add('cabinetSound', { loop: false, volume: 0.5 });
 
         }
         else {
-            player.footsteps = this.sound.add('ghostwalk', { loop: true, volume: 0.2 });
-            otherPlayer.footsteps = this.sound.add('humanwalk', { loop: true, volume: 0.5, pan: 0 });
-            otherPlayer.hideSound = this.sound.add('cabinetSound', { loop: false, volume: 0.5 });
+            player.footsteps = this.sound.add('ghostwalk', { loop: true, volume: 0.5 });
+            otherPlayer.footsteps = this.sound.add('humanwalk', { loop: true, volume: 1, pan: 0 });
+            otherPlayer.hideSound = this.sound.add('cabinetSound', { loop: false, volume: 1 });
         }
 
 
